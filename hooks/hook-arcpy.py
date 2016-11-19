@@ -1,0 +1,7 @@
+hiddenimports = [
+    'glob',
+]
+
+excludedimports = [
+    'arcpy',
+]
