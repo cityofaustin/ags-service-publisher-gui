@@ -4,7 +4,7 @@ setlocal EnableDelayedExpansion
 
 for /f %%F in ('where python') do SET PYTHONDIR=%%~dpF
 
-echo Converting UIC files to Python modules...
+echo Converting UIC files in %cd% to Python modules...
 for /R %%F IN (*.ui) do (
     set "output=%%~dpnF"
     set "output=!output!.py"

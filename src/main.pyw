@@ -12,6 +12,7 @@ log = setup_logger(__name__)
 
 
 def main():
+    multiprocessing.freeze_support()
     setup_console_log_handler(root_logger, verbose=True)
     log.debug('Application started: {}'.format(get_app_path()))
     app = QtGui.QApplication(sys.argv)
@@ -21,5 +22,4 @@ def main():
 
 
 if __name__ == '__main__':
-    multiprocessing.freeze_support()
     main()
