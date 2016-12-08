@@ -28,7 +28,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.workerThread = QtCore.QThread()
 
-        self.worker = Worker()
+        self.worker = Worker(
+            target=runner.run_mxd_data_sources_report,
+            kwargs={
+                'included_configs': ['LP_Testing'],
+                'output_filename': os.path.join(r'C:\Users\pughl\Documents\python_projects\ags-service-reports', 'test.csv'),
+                'warn_on_validation_errors': True,
+                'verbose': True
+            }
+        )
+
         self.worker.job_success.connect(self.success_dialog)
         self.worker.job_failure.connect(self.error_dialog)
         self.worker.moveToThread(self.workerThread)
