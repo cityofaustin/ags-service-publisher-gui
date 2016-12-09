@@ -146,7 +146,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             raise RuntimeError('Unknown message level: {}'.format(level))
 
     def log_info_message(self, message):
-        self.logWindow.appendPlainText(message)
+        self.logWindow.appendHtml('<font color="black">{}</font>'.format(escape_html(message)))
 
     def log_debug_message(self, message):
         self.logWindow.appendHtml('<font color="gray">{}</font>'.format(escape_html(message)))
