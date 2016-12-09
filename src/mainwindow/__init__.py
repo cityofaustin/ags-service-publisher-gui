@@ -9,14 +9,17 @@ from resultdialog import ResultDialog
 from ags_service_publisher import runner
 from ags_service_publisher.logging_io import setup_logger
 from helpers.pathhelpers import get_app_path
+from helpers.texthelpers import escape_html
 from helpers.arcpyhelpers import get_install_info
-from workers.worker import Worker
+from workers.subprocessworkerpool import SubProcessWorkerPool
+from workers.subprocessworker import SubProcessWorker
+from loghandlers.textwindowloghandler import TextWindowLogHandler
 
 log = setup_logger(__name__)
 
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, log_queue=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.setupUi(self)
         self.actionPublish_Services.triggered.connect(self.publish_services)
@@ -24,29 +27,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionGetInstallInfo.triggered.connect(self.get_install_info)
         self.actionGetExecutablePath.triggered.connect(self.get_executable_path)
         self.actionAbout.triggered.connect(self.about)
+        self.actionTestLogWindow.triggered.connect(self.test_log_window)
         self.actionExit.triggered.connect(self.close)
 
-        self.workerThread = QtCore.QThread()
+        self.worker_pool = SubProcessWorkerPool()
 
-        self.worker = Worker(
-            target=runner.run_mxd_data_sources_report,
-            kwargs={
-                'included_configs': ['LP_Testing'],
-                'output_filename': os.path.join(r'C:\Users\pughl\Documents\python_projects\ags-service-reports', 'test.csv'),
-                'warn_on_validation_errors': True,
-                'verbose': True
-            }
-        )
+        self.log_queue = log_queue
 
-        self.worker.job_success.connect(self.success_dialog)
-        self.worker.job_failure.connect(self.error_dialog)
-        self.worker.moveToThread(self.workerThread)
-
-        self.workerThread.started.connect(self.worker.start)
-        self.workerThread.finished.connect(self.worker.stop)
-
-        self.startButton.clicked.connect(self.workerThread.start)
-        self.stopButton.clicked.connect(self.workerThread.quit)
+        self.log_handler = TextWindowLogHandler()
+        self.log_handler.messageEmitted.connect(self.log_message)
+        runner.root_logger.addHandler(self.log_handler)
 
     def closeEvent(self, event):
         log.debug('closeEvent triggered')
@@ -59,7 +49,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
 
         if result == QtGui.QMessageBox.Yes:
-            self.stop_worker_thread()
+            self.worker_pool.quit_all_threads()
             log.debug('Exiting application!')
             event.accept()
         else:
@@ -68,37 +58,41 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def publish_services(self):
         configs = ['LP_Testing']
-        result_dialog = ResultDialog(self)
+        included_services = ['Boundaries', 'PlanningCadastre']
+        worker = SubProcessWorker(
+            target=runner.run_batch_publishing_job,
+            kwargs={
+                'included_configs': configs,
+                'included_services': included_services,
+                'warn_on_validation_errors': True,
+                'verbose': True
+            },
+            log_queue=self.log_queue
+        )
 
-        try:
-            runner.run_batch_publishing_job(included_configs=configs, warn_on_validation_errors=True, verbose=True)
-            result_dialog.setWindowTitle('Success - AGS Service Publisher')
-            result_dialog.setIcon(QtGui.QMessageBox.Information)
-            result_dialog.setText('Successfully published configs: {}'.format(', '.join(configs)))
-        except StandardError as e:
-            result_dialog.setWindowTitle('Error - AGS Service Publisher')
-            result_dialog.setIcon(QtGui.QMessageBox.Critical)
-            result_dialog.setText(str(e))
-        finally:
-            result_dialog.exec_()
+        worker_id = self.worker_pool.add_worker(worker)
+        self.worker_pool.start_worker(worker_id)
 
     def mxd_data_sources_report(self):
         configs = ['LP_Testing']
+        included_services = ['Boundaries', 'PlanningCadastre']
         report_name = 'test.csv'
         report_path = os.path.join(r'C:\Users\pughl\Documents\python_projects\ags-service-reports', report_name)
-        result_dialog = ResultDialog(self)
 
-        try:
-            runner.run_mxd_data_sources_report(included_configs=configs, output_filename=report_path, warn_on_validation_errors=True, verbose=True)
-            result_dialog.setWindowTitle('Success - AGS Service Publisher')
-            result_dialog.setIcon(QtGui.QMessageBox.Information)
-            result_dialog.setText('Report written to {}'.format(report_path))
-        except StandardError as e:
-            result_dialog.setWindowTitle('Error - AGS Service Publisher')
-            result_dialog.setIcon(QtGui.QMessageBox.Critical)
-            result_dialog.setText(str(e))
-        finally:
-            result_dialog.exec_()
+        worker = SubProcessWorker(
+            target=runner.run_mxd_data_sources_report,
+            kwargs={
+                'included_configs': configs,
+                'included_services': included_services,
+                'output_filename': report_path,
+                'warn_on_validation_errors': True,
+                'verbose': True
+            },
+            log_queue=self.log_queue
+        )
+
+        worker_id = self.worker_pool.add_worker(worker)
+        self.worker_pool.start_worker(worker_id)
 
     def get_install_info(self):
         result_dialog = ResultDialog(self)
@@ -132,25 +126,36 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         about_dialog = AboutDialog(self)
         about_dialog.exec_()
 
-    def stop_worker_thread(self):
-        if self.workerThread.isRunning():
-            log.debug('Stopping worker thread {}'.format(self.workerThread))
-            self.workerThread.quit()
-            self.workerThread.wait()
+    def test_log_window(self):
+        self.log_info_message('info')
+        self.log_debug_message('debug')
+        self.log_success_message('success')
+        self.log_warning_message('warning')
+        self.log_error_message('error')
 
-    def success_dialog(self, message):
-        self.stop_worker_thread()
-        result_dialog = ResultDialog(self)
-        result_dialog.setWindowTitle('Success')
-        result_dialog.setIcon(QtGui.QMessageBox.Information)
-        result_dialog.setText(message)
-        result_dialog.exec_()
+    def log_message(self, level, message):
+        if level == 'INFO':
+            self.log_info_message(message)
+        elif level == 'DEBUG':
+            self.log_debug_message(message)
+        elif level == 'WARNING':
+            self.log_warning_message(message)
+        elif level == 'ERROR':
+            self.log_error_message(message)
+        else:
+            raise RuntimeError('Unknown message level: {}'.format(level))
 
-    def error_dialog(self, message):
-        self.stop_worker_thread()
-        result_dialog = ResultDialog(self)
-        result_dialog.setWindowTitle('Error')
-        result_dialog.setIcon(QtGui.QMessageBox.Critical)
-        result_dialog.setText(message)
-        result_dialog.exec_()
+    def log_info_message(self, message):
+        self.logWindow.appendPlainText(message)
 
+    def log_debug_message(self, message):
+        self.logWindow.appendHtml('<font color="gray">{}</font>'.format(escape_html(message)))
+
+    def log_warning_message(self, message):
+        self.logWindow.appendHtml('<font color="blue">{}</font>'.format(escape_html(message)))
+
+    def log_success_message(self, message):
+        self.logWindow.appendHtml('<font color="green">{}</font>'.format(escape_html(message)))
+
+    def log_error_message(self, message):
+        self.logWindow.appendHtml('<font color="red">{}</font>'.format(escape_html(message)))
