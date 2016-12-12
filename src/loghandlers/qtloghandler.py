@@ -2,7 +2,7 @@ import logging
 from PyQt4 import QtCore
 
 
-class TextWindowLogHandler(logging.Handler, QtCore.QObject):
+class QtLogHandler(logging.Handler, QtCore.QObject):
     """
     Log handler that emits a Qt signal with the log level and log message for each handled log record.
     """

@@ -13,7 +13,7 @@ from helpers.texthelpers import escape_html
 from helpers.arcpyhelpers import get_install_info
 from workers.subprocessworkerpool import SubProcessWorkerPool
 from workers.subprocessworker import SubProcessWorker
-from loghandlers.textwindowloghandler import TextWindowLogHandler
+from loghandlers.qtloghandler import QtLogHandler
 
 log = setup_logger(__name__)
 
@@ -34,7 +34,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.log_queue = log_queue
 
-        self.log_handler = TextWindowLogHandler()
+        self.log_handler = QtLogHandler()
         self.log_handler.messageEmitted.connect(self.log_message)
         runner.root_logger.addHandler(self.log_handler)
 
