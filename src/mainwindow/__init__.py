@@ -1,6 +1,6 @@
 import os
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui
 
 from mainwindow import Ui_MainWindow
 from aboutdialog import AboutDialog
@@ -49,7 +49,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
 
         if result == QtGui.QMessageBox.Yes:
-            self.worker_pool.quit_all_threads()
+            self.worker_pool.quit_all_workers()
             log.debug('Exiting application!')
             event.accept()
         else:
@@ -70,8 +70,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             log_queue=self.log_queue
         )
 
-        worker_id = self.worker_pool.add_worker(worker)
-        self.worker_pool.start_worker(worker_id)
+        self.worker_pool.add_worker(worker)
+        self.worker_pool.start_worker(worker.id)
 
     def mxd_data_sources_report(self):
         configs = ['LP_Testing']
@@ -91,8 +91,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             log_queue=self.log_queue
         )
 
-        worker_id = self.worker_pool.add_worker(worker)
-        self.worker_pool.start_worker(worker_id)
+        self.worker_pool.add_worker(worker)
+        self.worker_pool.start_worker(worker.id)
 
     def get_install_info(self):
         result_dialog = ResultDialog(self)

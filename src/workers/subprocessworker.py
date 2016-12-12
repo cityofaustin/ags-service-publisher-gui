@@ -1,6 +1,7 @@
 from PyQt4 import QtCore
 
 import multiprocessing
+import itertools
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.mplog import logged_call
 
@@ -16,8 +17,11 @@ class SubProcessWorker(QtCore.QObject):
     job_success = QtCore.pyqtSignal(str)
     job_failure = QtCore.pyqtSignal(str)
 
+    get_next_worker_id = itertools.count().next
+
     def __init__(self, parent=None, target=None, args=(), kwargs={}, timer_check_interval=1000, log_queue=None):
         super(SubProcessWorker, self).__init__(parent)
+        self.id = self.get_next_worker_id()
         self.running = False
         self.timer = None
         self.timer_check_interval=timer_check_interval
@@ -26,7 +30,14 @@ class SubProcessWorker(QtCore.QObject):
         self.target = target
         self.args = tuple(args)
         self.kwargs = dict(kwargs)
-        log.debug('Worker initialized on thread {}'.format(str(self.thread())))
+
+        self.thread = QtCore.QThread()
+        self.moveToThread(self.thread)
+
+        self.thread.started.connect(self.start)
+        self.thread.finished.connect(self.stop)
+
+        log.debug('Worker {} initialized on thread {}'.format(self.id, str(self.thread)))
 
     def check_process_status(self):
         if not self.running:
@@ -55,20 +66,19 @@ class SubProcessWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def start(self):
         if self.running:
-            log.warn('Worker already started on thread {}'.format(str(self.thread())))
+            log.warn('Worker {} already started on thread {}'.format(self.id, str(self.thread)))
             return
-        log.debug('Worker started on thread {}'.format(str(self.thread())))
+        log.debug('Worker {} started on thread {}'.format(self.id, str(self.thread)))
         self.running = True
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.check_process_status)
 
-
         self.process = multiprocessing.Process(
             target=logged_call,
             args=(self.log_queue, self.target) + self.args,
             kwargs=self.kwargs
-            )
+        )
 
         self.process.start()
         self.timer.start(self.timer_check_interval)
@@ -77,7 +87,7 @@ class SubProcessWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def stop(self):
         if not self.running:
-            log.warn('Worker already stopped on thread {}'.format(str(self.thread())))
+            log.warn('Worker {} already stopped on thread {}'.format(self.id, str(self.thread)))
             return
         self.running = False
         self.timer.stop()
@@ -85,4 +95,4 @@ class SubProcessWorker(QtCore.QObject):
             log.debug('Terminating process {} (pid {})'.format(self.process.name, self.process.pid))
             self.process.terminate()
             self.process.join()
-        log.debug('Worker stopped on thread {}'.format(str(self.thread())))
+        log.debug('Worker {} stopped on thread {}'.format(self.id, str(self.thread)))
