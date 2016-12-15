@@ -2,7 +2,10 @@ import sys
 
 # Add arcpy's directories to sys.path
 from archook import get_arcpy
-get_arcpy()
+try:
+    get_arcpy()
+except ImportError:
+    print 'Unable to locate arcpy directory'
 
 # Additional tweaks to placate arcpy
 from types import ModuleType

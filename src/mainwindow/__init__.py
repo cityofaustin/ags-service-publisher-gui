@@ -11,8 +11,8 @@ from ags_service_publisher.logging_io import setup_logger
 from helpers.pathhelpers import get_app_path
 from helpers.texthelpers import escape_html
 from helpers.arcpyhelpers import get_install_info
-from workers.subprocessworkerpool import SubProcessWorkerPool
-from workers.subprocessworker import SubProcessWorker
+from workers.workerpool import WorkerPool
+from workers.subprocessworker import SubprocessWorker
 from loghandlers.qtloghandler import QtLogHandler
 
 log = setup_logger(__name__)
@@ -30,7 +30,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionTestLogWindow.triggered.connect(self.test_log_window)
         self.actionExit.triggered.connect(self.close)
 
-        self.worker_pool = SubProcessWorkerPool()
+        self.worker_pool = WorkerPool()
 
         self.log_queue = log_queue
 
@@ -49,7 +49,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         )
 
         if result == QtGui.QMessageBox.Yes:
-            self.worker_pool.quit_all_workers()
+            self.worker_pool.stop_all_workers()
             log.debug('Exiting application!')
             event.accept()
         else:
@@ -59,7 +59,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def publish_services(self):
         configs = ['LP_Testing']
         included_services = ['Boundaries', 'PlanningCadastre']
-        worker = SubProcessWorker(
+
+        worker = SubprocessWorker(
             target=runner.run_batch_publishing_job,
             kwargs={
                 'included_configs': configs,
@@ -70,6 +71,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             log_queue=self.log_queue
         )
 
+        worker.result.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
         self.worker_pool.start_worker(worker.id)
 
@@ -79,7 +81,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         report_name = 'test.csv'
         report_path = os.path.join(r'C:\Users\pughl\Documents\python_projects\ags-service-reports', report_name)
 
-        worker = SubProcessWorker(
+        worker = SubprocessWorker(
             target=runner.run_mxd_data_sources_report,
             kwargs={
                 'included_configs': configs,
@@ -91,6 +93,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             log_queue=self.log_queue
         )
 
+        worker.result.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
         self.worker_pool.start_worker(worker.id)
 
@@ -132,6 +135,13 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.log_success_message('success')
         self.log_warning_message('warning')
         self.log_error_message('error')
+
+    def handle_worker_result(self, worker_id, exitcode, result):
+        log.debug('Worker {} resulted in exitcode {} with result value: {}'.format(worker_id, exitcode, result))
+        if exitcode == 0:
+            self.log_success_message(result)
+        else:
+            self.log_error_message(result)
 
     def log_message(self, level, message):
         if level == 'INFO':

@@ -1,32 +1,34 @@
-from PyQt4 import QtCore
-
-import multiprocessing
 import itertools
+import multiprocessing
+import sys
+import traceback
+
+from PyQt4 import QtCore
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.mplog import logged_call
 
 log = setup_logger(__name__)
 
 
-class SubProcessWorker(QtCore.QObject):
+class SubprocessWorker(QtCore.QObject):
     """
     Worker that runs the target function in a separate sub-process, watches its exitcode periodically and emits a
-    success or failure signal when the process has exited.
+    signal with the worker ID, exit code and return value or exception instance when the process has exited.
     """
 
-    job_success = QtCore.pyqtSignal(str)
-    job_failure = QtCore.pyqtSignal(str)
+    result = QtCore.pyqtSignal(int, int, object)
 
     get_next_worker_id = itertools.count().next
 
     def __init__(self, parent=None, target=None, args=(), kwargs={}, timer_check_interval=1000, log_queue=None):
-        super(SubProcessWorker, self).__init__(parent)
+        super(SubprocessWorker, self).__init__(parent)
         self.id = self.get_next_worker_id()
         self.running = False
         self.timer = None
         self.timer_check_interval=timer_check_interval
         self.process = None
         self.log_queue = log_queue
+        self.result_queue = multiprocessing.Queue()
         self.target = target
         self.args = tuple(args)
         self.kwargs = dict(kwargs)
@@ -45,20 +47,12 @@ class SubProcessWorker(QtCore.QObject):
             log.error(message)
             raise RuntimeError(message)
         log.debug('Checking status of subprocess {} (pid {})'.format(self.process.name, self.process.pid))
-        if self.process.exitcode == 0:
-            message = 'Subprocess {} finished successfully (pid {}, exit code {})'.format(
+        if not self.process.is_alive():
+            message = 'Subprocess {} ended (pid {}, exit code {})'.format(
                 self.process.name, self.process.pid, self.process.exitcode
             )
-            self.job_success.emit(message)
             log.debug(message)
-            self.stop()
-        elif self.process.exitcode > 0:
-            message = 'An error occurred in subprocess {} (pid {}, exit code {})'.format(
-                self.process.name, self.process.pid, self.process.exitcode
-            )
-            self.job_failure.emit(message)
-            log.debug(message)
-            self.stop()
+            self.result.emit(self.id, self.process.exitcode, self.result_queue.get())
         else:
             message = 'Subprocess {} (pid {}) is still active'.format(self.process.name, self.process.pid)
             log.debug(message)
@@ -75,14 +69,14 @@ class SubProcessWorker(QtCore.QObject):
         self.timer.timeout.connect(self.check_process_status)
 
         self.process = multiprocessing.Process(
-            target=logged_call,
-            args=(self.log_queue, self.target) + self.args,
+            target=wrap_logged_call,
+            args=(self.target, self.log_queue, self.result_queue) + self.args,
             kwargs=self.kwargs
         )
 
         self.process.start()
         self.timer.start(self.timer_check_interval)
-        log.debug('Process {} (pid {}) started'.format(self.process.name, self.process.pid))
+        log.debug('Subprocess {} (pid {}) started'.format(self.process.name, self.process.pid))
 
     @QtCore.pyqtSlot()
     def stop(self):
@@ -92,7 +86,17 @@ class SubProcessWorker(QtCore.QObject):
         self.running = False
         self.timer.stop()
         if self.process.is_alive():
-            log.debug('Terminating process {} (pid {})'.format(self.process.name, self.process.pid))
+            log.debug('Terminating subprocess {} (pid {})'.format(self.process.name, self.process.pid))
             self.process.terminate()
             self.process.join()
         log.debug('Worker {} stopped on thread {}'.format(self.id, str(self.thread)))
+
+
+def wrap_logged_call(func, log_queue, result_queue, *args, **kwargs):
+    try:
+        result = logged_call(log_queue, func, *args, **kwargs)
+        result_queue.put(result)
+    except:
+        result = Exception(''.join(traceback.format_exception(*sys.exc_info())))
+        result_queue.put(result)
+        raise
