@@ -5,6 +5,7 @@ from PyQt4 import QtGui
 from mainwindow import Ui_MainWindow
 from aboutdialog import AboutDialog
 from resultdialog import ResultDialog
+from publishdialog import PublishDialog
 
 from ags_service_publisher import runner
 from ags_service_publisher.logging_io import setup_logger
@@ -22,7 +23,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None, log_queue=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.setupUi(self)
-        self.actionPublish_Services.triggered.connect(self.publish_services)
+        self.actionPublish_Services.triggered.connect(self.show_publish_dialog)
         self.actionMXD_Data_Sources_Report.triggered.connect(self.mxd_data_sources_report)
         self.actionGetInstallInfo.triggered.connect(self.get_install_info)
         self.actionGetExecutablePath.triggered.connect(self.get_executable_path)
@@ -56,18 +57,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             log.debug('Ignoring closeEvent')
             event.ignore()
 
-    def publish_services(self):
-        configs = ['LP_Testing']
-        included_services = ['Boundaries', 'PlanningCadastre']
-
+    def publish_services(self, *args, **kwargs):
         worker = SubprocessWorker(
             target=runner.run_batch_publishing_job,
-            kwargs={
-                'included_configs': configs,
-                'included_services': included_services,
-                'warn_on_validation_errors': True,
-                'verbose': True
-            },
+            args=args,
+            kwargs=kwargs,
             log_queue=self.log_queue
         )
 
@@ -128,6 +122,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def about(self):
         about_dialog = AboutDialog(self)
         about_dialog.exec_()
+
+    def show_publish_dialog(self):
+        publish_dialog = PublishDialog(self)
+        publish_dialog.exec_()
 
     def test_log_window(self):
         self.log_info_message('info')
