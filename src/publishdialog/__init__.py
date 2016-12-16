@@ -13,6 +13,9 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
+        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
+        self._acceptButton = self.buttonBox.addButton('Publish selected services', QtGui.QDialogButtonBox.AcceptRole)
+
         self.servicesTree.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
         self.instancesTree.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
 
@@ -41,10 +44,20 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
                 instance_item.setText(1, 'AGS Instance')
                 instance_item.setFlags(instance_item.flags() | Qt.ItemIsUserCheckable)
                 instance_item.setCheckState(0, Qt.Unchecked)
+        self.update_publish_button_state()
 
         self.buttonBox.accepted.connect(self.publish_selected_items)
+        self.servicesTree.itemChanged.connect(self.update_publish_button_state)
+        self.instancesTree.itemChanged.connect(self.update_publish_button_state)
 
-    def publish_selected_items(self):
+    def update_publish_button_state(self):
+        included_configs, included_services, included_envs, included_instances = self.get_selected_items()
+        self._acceptButton.setEnabled(
+            (len(included_configs) > 0 and len(included_instances) > 0)
+        )
+
+
+    def get_selected_items(self):
         included_configs = []
         included_services = []
         included_envs = []
@@ -75,6 +88,10 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
                     instance_name = str(instance_item.text(0))
                     included_instances.append(instance_name)
                     log.debug('Selected instance name: {}'.format(instance_name))
+        return included_configs, included_services, included_envs, included_instances
+
+    def publish_selected_items(self):
+        included_configs, included_services, included_envs, included_instances = self.get_selected_items()
         if len(included_configs) > 0 and len(included_instances) > 0:
             self.parent().publish_services(
                 included_configs=included_configs,
