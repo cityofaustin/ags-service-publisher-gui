@@ -25,24 +25,22 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
             config_item = QtGui.QTreeWidgetItem(self.servicesTree)
             config_item.setText(0, config_name)
             config_item.setText(1, 'Config Name')
-            config_item.setFlags(config_item.flags() | Qt.ItemIsTristate | Qt.ItemIsUserCheckable)
+            config_item.setFlags(config_item.flags() | Qt.ItemIsTristate)
             for service_name, service_type, service_properties in normalize_services(services, default_service_properties):
                 service_item = QtGui.QTreeWidgetItem(config_item)
                 service_item.setText(0, service_name)
                 service_item.setText(1, '{} Service'.format(service_type))
-                service_item.setFlags(service_item.flags() | Qt.ItemIsUserCheckable)
                 service_item.setCheckState(0, Qt.Unchecked)
         user_config = get_config('userconfig')
         for env_name, env in user_config['environments'].iteritems():
             env_item = QtGui.QTreeWidgetItem(self.instancesTree)
             env_item.setText(0, env_name)
             env_item.setText(1, 'Environment')
-            env_item.setFlags(env_item.flags() | Qt.ItemIsTristate | Qt.ItemIsUserCheckable)
+            env_item.setFlags(env_item.flags() | Qt.ItemIsTristate)
             for instance_name in env.get('ags_instances'):
                 instance_item = QtGui.QTreeWidgetItem(env_item)
                 instance_item.setText(0, instance_name)
                 instance_item.setText(1, 'AGS Instance')
-                instance_item.setFlags(instance_item.flags() | Qt.ItemIsUserCheckable)
                 instance_item.setCheckState(0, Qt.Unchecked)
         self.update_publish_button_state()
 
@@ -51,13 +49,14 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
         self.instancesTree.itemChanged.connect(self.update_publish_button_state)
 
     def update_publish_button_state(self):
+        log.debug('Updating publish button state')
         included_configs, included_services, included_envs, included_instances = self.get_selected_items()
         self._acceptButton.setEnabled(
             (len(included_configs) > 0 and len(included_instances) > 0)
         )
 
-
     def get_selected_items(self):
+        log.debug('Getting selected items')
         included_configs = []
         included_services = []
         included_envs = []
