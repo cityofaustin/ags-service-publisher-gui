@@ -1,4 +1,4 @@
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
@@ -9,6 +9,9 @@ log = setup_logger(__name__)
 
 
 class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
+
+    publishSelected = QtCore.pyqtSignal(tuple, tuple, tuple, tuple)
+
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
@@ -87,16 +90,7 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
                     instance_name = str(instance_item.text(0))
                     included_instances.append(instance_name)
                     log.debug('Selected instance name: {}'.format(instance_name))
-        return included_configs, included_services, included_envs, included_instances
+        return map(tuple, (included_configs, included_services, included_envs, included_instances))
 
     def publish_selected_items(self):
-        included_configs, included_services, included_envs, included_instances = self.get_selected_items()
-        if len(included_configs) > 0 and len(included_instances) > 0:
-            self.parent().publish_services(
-                included_configs=included_configs,
-                included_services=included_services,
-                included_envs=included_envs,
-                included_instances=included_instances
-            )
-        else:
-            log.warn('No publishable configs or instances were selected!')
+        self.publishSelected.emit(*self.get_selected_items())

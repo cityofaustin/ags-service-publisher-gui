@@ -57,11 +57,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             log.debug('Ignoring closeEvent')
             event.ignore()
 
-    def publish_services(self, *args, **kwargs):
+    def publish_services(self, included_configs, included_services, included_envs, included_instances):
         worker = SubprocessWorker(
             target=runner.run_batch_publishing_job,
-            args=args,
-            kwargs=kwargs,
+            kwargs={
+                'included_configs': included_configs,
+                'included_services': included_services,
+                'included_envs': included_envs,
+                'included_instances': included_instances
+            },
             log_queue=self.log_queue
         )
 
@@ -125,6 +129,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def show_publish_dialog(self):
         publish_dialog = PublishDialog(self)
+        publish_dialog.publishSelected.connect(self.publish_services)
         publish_dialog.exec_()
 
     def test_log_window(self):
