@@ -62,10 +62,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 'included_services': included_services,
                 'included_envs': included_envs,
                 'included_instances': included_instances
-            },
-            log_handler=self.log_handler
+            }
         )
 
+        worker.messageEmitted.connect(self.handle_worker_message)
         worker.resultEmitted.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
         self.worker_pool.start_worker(worker.id)
@@ -84,10 +84,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 'output_filename': report_path,
                 'warn_on_validation_errors': True,
                 'verbose': True
-            },
-            log_handler=self.log_handler
+            }
         )
 
+        worker.messageEmitted.connect(self.handle_worker_message)
         worker.resultEmitted.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
         self.worker_pool.start_worker(worker.id)
@@ -135,6 +135,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.log_success_message('success')
         self.log_warning_message('warning')
         self.log_error_message('error')
+
+    def handle_worker_message(self, worker_id, level, message):
+        message = 'Worker {}: {}'.format(worker_id, message)
+        self.log_message(level, message)
 
     def handle_worker_result(self, worker_id, exitcode, result):
         log.debug('Worker {} resulted in exitcode {} with result value: {}'.format(worker_id, exitcode, result))
