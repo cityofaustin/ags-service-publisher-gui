@@ -1,1 +1,2 @@
 git+http://github.com/JamesRamm/archook.git
+logutils===0.3.3

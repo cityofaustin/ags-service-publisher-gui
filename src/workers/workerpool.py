@@ -11,7 +11,7 @@ class WorkerPool:
 
     def add_worker(self, worker):
         log.debug('Adding worker {} to worker pool'.format(worker.id))
-        worker.result.connect(self.remove_worker)
+        worker.resultEmitted.connect(self.remove_worker)
         self.workers[worker.id] = worker
 
     def remove_worker(self, worker_id):

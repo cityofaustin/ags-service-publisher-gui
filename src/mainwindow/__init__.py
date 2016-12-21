@@ -1,26 +1,25 @@
 import os
 
 from PyQt4 import QtGui
-
-from mainwindow import Ui_MainWindow
-from aboutdialog import AboutDialog
-from resultdialog import ResultDialog
-from publishdialog import PublishDialog
-
 from ags_service_publisher import runner
 from ags_service_publisher.logging_io import setup_logger
+
+from aboutdialog import AboutDialog
+from helpers.arcpyhelpers import get_install_info
 from helpers.pathhelpers import get_app_path
 from helpers.texthelpers import escape_html
-from helpers.arcpyhelpers import get_install_info
-from workers.workerpool import WorkerPool
-from workers.subprocessworker import SubprocessWorker
 from loghandlers.qtloghandler import QtLogHandler
+from mainwindow import Ui_MainWindow
+from publishdialog import PublishDialog
+from resultdialog import ResultDialog
+from workers.subprocessworker import SubprocessWorker
+from workers.workerpool import WorkerPool
 
 log = setup_logger(__name__)
 
 
 class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
-    def __init__(self, parent=None, log_queue=None):
+    def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
         self.setupUi(self)
         self.actionPublish_Services.triggered.connect(self.show_publish_dialog)
@@ -32,8 +31,6 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionExit.triggered.connect(self.close)
 
         self.worker_pool = WorkerPool()
-
-        self.log_queue = log_queue
 
         self.log_handler = QtLogHandler()
         self.log_handler.messageEmitted.connect(self.log_message)
@@ -66,10 +63,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 'included_envs': included_envs,
                 'included_instances': included_instances
             },
-            log_queue=self.log_queue
+            log_handler=self.log_handler
         )
 
-        worker.result.connect(self.handle_worker_result)
+        worker.resultEmitted.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
         self.worker_pool.start_worker(worker.id)
 
@@ -88,10 +85,10 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 'warn_on_validation_errors': True,
                 'verbose': True
             },
-            log_queue=self.log_queue
+            log_handler=self.log_handler
         )
 
-        worker.result.connect(self.handle_worker_result)
+        worker.resultEmitted.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
         self.worker_pool.start_worker(worker.id)
 

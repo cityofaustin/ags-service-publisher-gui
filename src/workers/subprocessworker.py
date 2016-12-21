@@ -5,30 +5,46 @@ import traceback
 
 from PyQt4 import QtCore
 from ags_service_publisher.logging_io import setup_logger
-from ags_service_publisher.mplog import logged_call
+from logutils.queue import QueueHandler, QueueListener
+
+from loghandlers.qtloghandler import QtLogHandler
 
 log = setup_logger(__name__)
 
 
 class SubprocessWorker(QtCore.QObject):
     """
-    Worker that runs the target function in a separate sub-process, watches its exitcode periodically and emits a
-    signal with the worker ID, exit code and return value or exception instance when the process has exited.
+    Worker object that runs the target function in a separate sub-process, checking its exitcode periodically.
+
+    Signals and parameters:
+
+        - messageEmitted: Emitted whenever the target function's root logger emits a message
+            - Worker ID (int)
+            - Log level name (str)
+            - Log message (str)
+        - resultEmitted: Emitted when the process ends.
+            - Worker ID (int)
+            - Exit code (int)
+            - Return value or exception instance (object)
     """
 
-    result = QtCore.pyqtSignal(int, int, object)
+    messageEmitted = QtCore.pyqtSignal(int, str, str)
+    resultEmitted = QtCore.pyqtSignal(int, int, object)
 
     get_next_worker_id = itertools.count().next
 
-    def __init__(self, parent=None, target=None, args=(), kwargs={}, timer_check_interval=1000, log_queue=None):
+    def __init__(self, parent=None, target=None, args=(), kwargs={}, timer_check_interval=1000, log_handler=None):
         super(SubprocessWorker, self).__init__(parent)
         self.id = self.get_next_worker_id()
         self.running = False
         self.timer = None
         self.timer_check_interval=timer_check_interval
         self.process = None
-        self.log_queue = log_queue
+        self.log_handler = log_handler if log_handler is not None else QtLogHandler()
+        self.log_handler.messageEmitted.connect(self.handle_message)
+        self.log_queue = multiprocessing.Queue()
         self.result_queue = multiprocessing.Queue()
+        self.log_queue_listener = QueueListener(self.log_queue, self.log_handler)
         self.target = target
         self.args = tuple(args)
         self.kwargs = dict(kwargs)
@@ -52,7 +68,7 @@ class SubprocessWorker(QtCore.QObject):
                 self.process.name, self.process.pid, self.process.exitcode
             )
             log.debug(message)
-            self.result.emit(self.id, self.process.exitcode, self.result_queue.get())
+            self.resultEmitted.emit(self.id, self.process.exitcode, self.result_queue.get())
         else:
             message = 'Subprocess {} (pid {}) is still active'.format(self.process.name, self.process.pid)
             log.debug(message)
@@ -68,8 +84,10 @@ class SubprocessWorker(QtCore.QObject):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.check_process_status)
 
+        self.log_queue_listener.start()
+
         self.process = multiprocessing.Process(
-            target=wrap_logged_call,
+            target=wrap_target_function,
             args=(self.target, self.log_queue, self.result_queue) + self.args,
             kwargs=self.kwargs
         )
@@ -85,16 +103,24 @@ class SubprocessWorker(QtCore.QObject):
             return
         self.running = False
         self.timer.stop()
+
         if self.process.is_alive():
             log.debug('Terminating subprocess {} (pid {})'.format(self.process.name, self.process.pid))
             self.process.terminate()
             self.process.join()
         log.debug('Worker {} stopped on thread {}'.format(self.id, str(self.thread)))
 
+        self.log_queue_listener.stop()
 
-def wrap_logged_call(func, log_queue, result_queue, *args, **kwargs):
+    @QtCore.pyqtSlot(str, str)
+    def handle_message(self, level, message):
+        self.messageEmitted.emit(self.id, level, message)
+
+
+def wrap_target_function(target, log_queue, result_queue, *args, **kwargs):
     try:
-        result = logged_call(log_queue, func, *args, **kwargs)
+        setup_logger(handler=QueueHandler(log_queue))
+        result = target(*args, **kwargs)
         result_queue.put(result)
     except:
         result = Exception(''.join(traceback.format_exception(*sys.exc_info())))
