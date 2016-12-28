@@ -11,6 +11,7 @@ from helpers.texthelpers import escape_html
 from loghandlers.qtloghandler import QtLogHandler
 from mainwindow import Ui_MainWindow
 from publishdialog import PublishDialog
+from mxdreportdialog import MXDReportDialog
 from resultdialog import ResultDialog
 from workers.subprocessworker import SubprocessWorker
 from workers.workerpool import WorkerPool
@@ -23,7 +24,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self, parent)
         self.setupUi(self)
         self.actionPublish_Services.triggered.connect(self.show_publish_dialog)
-        self.actionMXD_Data_Sources_Report.triggered.connect(self.mxd_data_sources_report)
+        self.actionMXD_Data_Sources_Report.triggered.connect(self.show_mxd_report_dialog)
         self.actionGetInstallInfo.triggered.connect(self.get_install_info)
         self.actionGetExecutablePath.triggered.connect(self.get_executable_path)
         self.actionAbout.triggered.connect(self.about)
@@ -70,20 +71,15 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.worker_pool.add_worker(worker)
         self.worker_pool.start_worker(worker.id)
 
-    def mxd_data_sources_report(self):
-        configs = ['LP_Testing']
-        included_services = ['Boundaries', 'PlanningCadastre']
-        report_name = 'test.csv'
-        report_path = os.path.join(r'C:\Users\pughl\Documents\python_projects\ags-service-reports', report_name)
-
+    def mxd_data_sources_report(self, included_configs, included_services, included_envs, output_filename):
         worker = SubprocessWorker(
             target=runner.run_mxd_data_sources_report,
             kwargs={
-                'included_configs': configs,
+                'included_configs': included_configs,
                 'included_services': included_services,
-                'output_filename': report_path,
-                'warn_on_validation_errors': True,
-                'verbose': True
+                'included_envs': included_envs,
+                'output_filename': output_filename,
+                'warn_on_validation_errors': True
             }
         )
 
@@ -128,6 +124,11 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         publish_dialog = PublishDialog(self)
         publish_dialog.publishSelected.connect(self.publish_services)
         publish_dialog.exec_()
+
+    def show_mxd_report_dialog(self):
+        mxd_report_dialog = MXDReportDialog(self)
+        mxd_report_dialog.runReport.connect(self.mxd_data_sources_report)
+        mxd_report_dialog.exec_()
 
     def test_log_window(self):
         self.log_info_message('info')
