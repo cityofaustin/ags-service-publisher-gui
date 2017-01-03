@@ -11,6 +11,7 @@ pyinstaller ^
     --runtime-hook .\hooks\rthooks\pyi_rth_multiprocessing.py ^
     --runtime-hook .\hooks\rthooks\pyi_rth_arcpy.py ^
     --clean ^
+    --noconsole ^
     -n ags_service_publisher_gui ^
     .\src\main.pyw
 
