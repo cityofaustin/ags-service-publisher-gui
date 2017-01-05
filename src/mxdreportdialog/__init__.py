@@ -24,7 +24,7 @@ class MXDReportDialog(QtGui.QDialog, Ui_MXDReportDialog):
 
         self.filename = ''
 
-        for config_name, config in get_configs().iteritems():
+        for config_name, config in get_configs(config_dir=parent.config_dir).iteritems():
             services = config.get('services')
             default_service_properties = config.get('default_service_properties')
             config_item = QtGui.QTreeWidgetItem(self.servicesTree)
@@ -36,7 +36,7 @@ class MXDReportDialog(QtGui.QDialog, Ui_MXDReportDialog):
                 service_item.setText(0, service_name)
                 service_item.setText(1, '{} Service'.format(service_type))
                 service_item.setCheckState(0, Qt.Unchecked)
-        user_config = get_config('userconfig')
+        user_config = get_config('userconfig', config_dir=parent.config_dir)
         for env_name, env in user_config['environments'].iteritems():
             env_item = QtGui.QTreeWidgetItem(self.envsTree)
             env_item.setText(0, env_name)

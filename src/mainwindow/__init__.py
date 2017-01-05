@@ -37,6 +37,16 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.log_handler.messageEmitted.connect(self.log_message)
         runner.root_logger.addHandler(self.log_handler)
 
+        self.config_dir = os.getenv(
+            'AGS_SERVICE_PUBLISHER_CONFIG_DIR',
+            os.path.abspath(os.path.join(os.path.dirname(get_app_path()), 'configs'))
+        )
+
+        self.log_dir = os.getenv(
+            'AGS_SERVICE_PUBLISHER_LOG_DIR',
+            os.path.abspath(os.path.join(os.path.dirname(get_app_path()), 'logs'))
+        )
+
     def closeEvent(self, event):
         log.debug('closeEvent triggered')
         result = QtGui.QMessageBox.question(
@@ -62,7 +72,9 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 'included_configs': included_configs,
                 'included_services': included_services,
                 'included_envs': included_envs,
-                'included_instances': included_instances
+                'included_instances': included_instances,
+                'config_dir': self.config_dir,
+                'log_dir': self.log_dir
             }
         )
 
@@ -79,7 +91,8 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 'included_services': included_services,
                 'included_envs': included_envs,
                 'output_filename': output_filename,
-                'warn_on_validation_errors': True
+                'warn_on_validation_errors': True,
+                'config_dir': self.config_dir
             }
         )
 

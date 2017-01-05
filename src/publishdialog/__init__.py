@@ -22,7 +22,7 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
         self.servicesTree.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
         self.instancesTree.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
 
-        for config_name, config in get_configs().iteritems():
+        for config_name, config in get_configs(config_dir=parent.config_dir).iteritems():
             services = config.get('services')
             default_service_properties = config.get('default_service_properties')
             config_item = QtGui.QTreeWidgetItem(self.servicesTree)
@@ -34,7 +34,7 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
                 service_item.setText(0, service_name)
                 service_item.setText(1, '{} Service'.format(service_type))
                 service_item.setCheckState(0, Qt.Unchecked)
-        user_config = get_config('userconfig')
+        user_config = get_config('userconfig', config_dir=parent.config_dir)
         for env_name, env in user_config['environments'].iteritems():
             env_item = QtGui.QTreeWidgetItem(self.instancesTree)
             env_item.setText(0, env_name)
