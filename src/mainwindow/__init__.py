@@ -1,7 +1,7 @@
 import os
 
 from PyQt4 import QtGui
-from ags_service_publisher import runner
+from ags_service_publisher.runner import Runner, root_logger
 from ags_service_publisher.logging_io import setup_logger
 
 from aboutdialog import AboutDialog
@@ -35,7 +35,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.log_handler = QtLogHandler()
         self.log_handler.messageEmitted.connect(self.log_message)
-        runner.root_logger.addHandler(self.log_handler)
+        root_logger.addHandler(self.log_handler)
 
         self.config_dir = os.getenv(
             'AGS_SERVICE_PUBLISHER_CONFIG_DIR',
@@ -66,15 +66,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             event.ignore()
 
     def publish_services(self, included_configs, included_services, included_envs, included_instances):
+        runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir)
         worker = SubprocessWorker(
             target=runner.run_batch_publishing_job,
             kwargs={
                 'included_configs': included_configs,
                 'included_services': included_services,
                 'included_envs': included_envs,
-                'included_instances': included_instances,
-                'config_dir': self.config_dir,
-                'log_dir': self.log_dir
+                'included_instances': included_instances
             }
         )
 
@@ -84,6 +83,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.worker_pool.start_worker(worker.id)
 
     def mxd_data_sources_report(self, included_configs, included_services, included_envs, output_filename):
+        runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir)
         worker = SubprocessWorker(
             target=runner.run_mxd_data_sources_report,
             kwargs={
@@ -91,8 +91,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
                 'included_services': included_services,
                 'included_envs': included_envs,
                 'output_filename': output_filename,
-                'warn_on_validation_errors': True,
-                'config_dir': self.config_dir
+                'warn_on_validation_errors': True
             }
         )
 
