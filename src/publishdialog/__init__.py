@@ -25,12 +25,11 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
 
         for config_name, config in get_configs(config_dir=parent.config_dir).iteritems():
             services = config.get('services')
-            default_service_properties = config.get('default_service_properties')
             config_item = QtGui.QTreeWidgetItem(self.servicesTree)
             config_item.setText(0, config_name)
             config_item.setText(1, 'Config Name')
             config_item.setFlags(config_item.flags() | Qt.ItemIsTristate)
-            for service_name, service_type, service_properties in normalize_services(services, default_service_properties):
+            for service_name, service_type, _ in normalize_services(services):
                 service_item = QtGui.QTreeWidgetItem(config_item)
                 service_item.setText(0, service_name)
                 service_item.setText(1, '{} Service'.format(service_type))

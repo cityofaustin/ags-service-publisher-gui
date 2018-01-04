@@ -6,7 +6,7 @@ from ags_service_publisher.logging_io import setup_logger
 
 from aboutdialog import AboutDialog
 from helpers.arcpyhelpers import get_install_info
-from helpers.pathhelpers import get_app_path
+from helpers.pathhelpers import get_app_path, get_lib_path
 from helpers.texthelpers import escape_html
 from loghandlers.qtloghandler import QtLogHandler
 from mainwindow import Ui_MainWindow
@@ -39,12 +39,12 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.config_dir = os.getenv(
             'AGS_SERVICE_PUBLISHER_CONFIG_DIR',
-            os.path.abspath(os.path.join(os.path.dirname(get_app_path()), 'configs'))
+            os.path.abspath(os.path.join(os.path.dirname(get_lib_path()), 'configs'))
         )
 
         self.log_dir = os.getenv(
             'AGS_SERVICE_PUBLISHER_LOG_DIR',
-            os.path.abspath(os.path.join(os.path.dirname(get_app_path()), 'logs'))
+            os.path.abspath(os.path.join(os.path.dirname(get_lib_path()), 'logs'))
         )
 
     def closeEvent(self, event):
