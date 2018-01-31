@@ -133,14 +133,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         about_dialog.exec_()
 
     def show_publish_dialog(self):
-        publish_dialog = PublishDialog(self)
-        publish_dialog.publishSelected.connect(self.publish_services)
-        publish_dialog.exec_()
+        try:
+            publish_dialog = PublishDialog(self)
+            publish_dialog.publishSelected.connect(self.publish_services)
+            publish_dialog.exec_()
+        except Exception:
+            log.exception('An error occurred while showing the Publish dialog')
+            raise
 
     def show_mxd_report_dialog(self):
-        mxd_report_dialog = MXDReportDialog(self)
-        mxd_report_dialog.runReport.connect(self.mxd_data_sources_report)
-        mxd_report_dialog.exec_()
+        try:
+            mxd_report_dialog = MXDReportDialog(self)
+            mxd_report_dialog.runReport.connect(self.mxd_data_sources_report)
+            mxd_report_dialog.exec_()
+        except Exception:
+            log.exception('An error occurred while showing the MXD Report dialog')
+            raise
 
     def test_log_window(self):
         self.log_info_message('info')
