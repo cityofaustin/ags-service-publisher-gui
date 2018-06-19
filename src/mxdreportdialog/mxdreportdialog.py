@@ -1,108 +1,98 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\pughl\Documents\python_projects\ags-service-gui\src\mxdreportdialog\mxdreportdialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\pughl\Documents\python_projects\ags-service-gui\src\mxdreportdialog\mxdreportdialog.ui',
+# licensing of 'C:\Users\pughl\Documents\python_projects\ags-service-gui\src\mxdreportdialog\mxdreportdialog.ui' applies.
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created: Tue Jun 19 18:25:32 2018
+#      by: pyside2-uic  running on PySide2 5.11.0a1.dev1528378291
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_MXDReportDialog(object):
     def setupUi(self, MXDReportDialog):
-        MXDReportDialog.setObjectName(_fromUtf8("MXDReportDialog"))
+        MXDReportDialog.setObjectName("MXDReportDialog")
         MXDReportDialog.resize(544, 416)
-        MXDReportDialog.setWindowTitle(_fromUtf8("MXD Data Sources Report"))
+        MXDReportDialog.setWindowTitle("MXD Data Sources Report")
         MXDReportDialog.setSizeGripEnabled(True)
         MXDReportDialog.setModal(True)
-        self.gridLayout = QtGui.QGridLayout(MXDReportDialog)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.splitter = QtGui.QSplitter(MXDReportDialog)
+        self.gridLayout = QtWidgets.QGridLayout(MXDReportDialog)
+        self.gridLayout.setObjectName("gridLayout")
+        self.splitter = QtWidgets.QSplitter(MXDReportDialog)
         self.splitter.setOrientation(QtCore.Qt.Horizontal)
-        self.splitter.setObjectName(_fromUtf8("splitter"))
-        self.layoutWidget = QtGui.QWidget(self.splitter)
-        self.layoutWidget.setObjectName(_fromUtf8("layoutWidget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.layoutWidget)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.label = QtGui.QLabel(self.layoutWidget)
-        self.label.setObjectName(_fromUtf8("label"))
+        self.splitter.setObjectName("splitter")
+        self.layoutWidget = QtWidgets.QWidget(self.splitter)
+        self.layoutWidget.setObjectName("layoutWidget")
+        self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout.setObjectName("verticalLayout")
+        self.label = QtWidgets.QLabel(self.layoutWidget)
+        self.label.setObjectName("label")
         self.verticalLayout.addWidget(self.label)
-        self.servicesTree = QtGui.QTreeWidget(self.layoutWidget)
+        self.servicesTree = QtWidgets.QTreeWidget(self.layoutWidget)
         self.servicesTree.setAlternatingRowColors(True)
-        self.servicesTree.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
+        self.servicesTree.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         self.servicesTree.setColumnCount(2)
-        self.servicesTree.setObjectName(_fromUtf8("servicesTree"))
+        self.servicesTree.setObjectName("servicesTree")
         self.servicesTree.header().setMinimumSectionSize(100)
         self.servicesTree.header().setStretchLastSection(False)
         self.verticalLayout.addWidget(self.servicesTree)
-        self.layoutWidget1 = QtGui.QWidget(self.splitter)
-        self.layoutWidget1.setObjectName(_fromUtf8("layoutWidget1"))
-        self.verticalLayout_2 = QtGui.QVBoxLayout(self.layoutWidget1)
-        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
-        self.label_2 = QtGui.QLabel(self.layoutWidget1)
-        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.layoutWidget1 = QtWidgets.QWidget(self.splitter)
+        self.layoutWidget1.setObjectName("layoutWidget1")
+        self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.layoutWidget1)
+        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_2.setObjectName("verticalLayout_2")
+        self.label_2 = QtWidgets.QLabel(self.layoutWidget1)
+        self.label_2.setObjectName("label_2")
         self.verticalLayout_2.addWidget(self.label_2)
-        self.envsTree = QtGui.QTreeWidget(self.layoutWidget1)
+        self.envsTree = QtWidgets.QTreeWidget(self.layoutWidget1)
         self.envsTree.setAlternatingRowColors(True)
-        self.envsTree.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
+        self.envsTree.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
         self.envsTree.setColumnCount(2)
-        self.envsTree.setObjectName(_fromUtf8("envsTree"))
+        self.envsTree.setObjectName("envsTree")
         self.envsTree.header().setMinimumSectionSize(100)
         self.envsTree.header().setStretchLastSection(False)
         self.verticalLayout_2.addWidget(self.envsTree)
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
-        self.buttonBox = QtGui.QDialogButtonBox(MXDReportDialog)
+        self.buttonBox = QtWidgets.QDialogButtonBox(MXDReportDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel)
+        self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 2, 0, 1, 1)
-        self.widget = QtGui.QWidget(MXDReportDialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
+        self.widget = QtWidgets.QWidget(MXDReportDialog)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
         self.widget.setSizePolicy(sizePolicy)
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.horizontalLayout_4 = QtGui.QHBoxLayout(self.widget)
-        self.horizontalLayout_4.setMargin(0)
-        self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
-        self.label_3 = QtGui.QLabel(self.widget)
-        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.widget.setObjectName("widget")
+        self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.widget)
+        self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_4.setObjectName("horizontalLayout_4")
+        self.label_3 = QtWidgets.QLabel(self.widget)
+        self.label_3.setObjectName("label_3")
         self.horizontalLayout_4.addWidget(self.label_3)
-        self.outputfileLineEdit = QtGui.QLineEdit(self.widget)
-        self.outputfileLineEdit.setObjectName(_fromUtf8("outputfileLineEdit"))
+        self.outputfileLineEdit = QtWidgets.QLineEdit(self.widget)
+        self.outputfileLineEdit.setObjectName("outputfileLineEdit")
         self.horizontalLayout_4.addWidget(self.outputfileLineEdit)
-        self.outputfileButton = QtGui.QPushButton(self.widget)
-        self.outputfileButton.setObjectName(_fromUtf8("outputfileButton"))
+        self.outputfileButton = QtWidgets.QPushButton(self.widget)
+        self.outputfileButton.setObjectName("outputfileButton")
         self.horizontalLayout_4.addWidget(self.outputfileButton)
         self.gridLayout.addWidget(self.widget, 1, 0, 1, 1)
 
         self.retranslateUi(MXDReportDialog)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), MXDReportDialog.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), MXDReportDialog.reject)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), MXDReportDialog.accept)
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), MXDReportDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(MXDReportDialog)
 
     def retranslateUi(self, MXDReportDialog):
-        self.label.setText(_translate("MXDReportDialog", "Services to report:", None))
-        self.servicesTree.headerItem().setText(0, _translate("MXDReportDialog", "Name", None))
-        self.servicesTree.headerItem().setText(1, _translate("MXDReportDialog", "Type", None))
-        self.label_2.setText(_translate("MXDReportDialog", "Environments to report:", None))
-        self.envsTree.headerItem().setText(0, _translate("MXDReportDialog", "Name", None))
-        self.envsTree.headerItem().setText(1, _translate("MXDReportDialog", "Type", None))
-        self.label_3.setText(_translate("MXDReportDialog", "Output file:", None))
-        self.outputfileButton.setText(_translate("MXDReportDialog", "...", None))
+        self.label.setText(QtWidgets.QApplication.translate("MXDReportDialog", "Services to report:", None, -1))
+        self.servicesTree.headerItem().setText(0, QtWidgets.QApplication.translate("MXDReportDialog", "Name", None, -1))
+        self.servicesTree.headerItem().setText(1, QtWidgets.QApplication.translate("MXDReportDialog", "Type", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("MXDReportDialog", "Environments to report:", None, -1))
+        self.envsTree.headerItem().setText(0, QtWidgets.QApplication.translate("MXDReportDialog", "Name", None, -1))
+        self.envsTree.headerItem().setText(1, QtWidgets.QApplication.translate("MXDReportDialog", "Type", None, -1))
+        self.label_3.setText(QtWidgets.QApplication.translate("MXDReportDialog", "Output file:", None, -1))
+        self.outputfileButton.setText(QtWidgets.QApplication.translate("MXDReportDialog", "...", None, -1))
 

@@ -1,86 +1,74 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\pughl\Documents\python_projects\ags-service-gui\src\mainwindow\mainwindow.ui'
+# Form implementation generated from reading ui file 'C:\Users\pughl\Documents\python_projects\ags-service-gui\src\mainwindow\mainwindow.ui',
+# licensing of 'C:\Users\pughl\Documents\python_projects\ags-service-gui\src\mainwindow\mainwindow.ui' applies.
 #
-# Created by: PyQt4 UI code generator 4.11.4
+# Created: Tue Jun 19 18:25:32 2018
+#      by: pyside2-uic  running on PySide2 5.11.0a1.dev1528378291
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt4 import QtCore, QtGui
-
-try:
-    _fromUtf8 = QtCore.QString.fromUtf8
-except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName(_fromUtf8("MainWindow"))
+        MainWindow.setObjectName("MainWindow")
         MainWindow.resize(640, 480)
-        self.centralwidget = QtGui.QWidget(MainWindow)
-        self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.gridLayout = QtGui.QGridLayout(self.centralwidget)
-        self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.logWindow = QtGui.QPlainTextEdit(self.centralwidget)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
+        self.gridLayout.setObjectName("gridLayout")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout.setObjectName("horizontalLayout")
+        self.logWindow = QtWidgets.QPlainTextEdit(self.centralwidget)
         font = QtGui.QFont()
-        font.setFamily(_fromUtf8("Courier New"))
+        font.setFamily("Courier New")
         font.setPointSize(10)
         self.logWindow.setFont(font)
         self.logWindow.setAcceptDrops(False)
         self.logWindow.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.logWindow.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOn)
         self.logWindow.setTabChangesFocus(True)
-        self.logWindow.setDocumentTitle(_fromUtf8(""))
+        self.logWindow.setDocumentTitle("")
         self.logWindow.setUndoRedoEnabled(False)
-        self.logWindow.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+        self.logWindow.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
         self.logWindow.setReadOnly(True)
-        self.logWindow.setPlainText(_fromUtf8(""))
+        self.logWindow.setPlainText("")
         self.logWindow.setCursorWidth(0)
         self.logWindow.setTextInteractionFlags(QtCore.Qt.TextSelectableByKeyboard|QtCore.Qt.TextSelectableByMouse)
-        self.logWindow.setObjectName(_fromUtf8("logWindow"))
+        self.logWindow.setObjectName("logWindow")
         self.horizontalLayout.addWidget(self.logWindow)
         self.gridLayout.addLayout(self.horizontalLayout, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtGui.QMenuBar(MainWindow)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 640, 18))
-        self.menubar.setObjectName(_fromUtf8("menubar"))
-        self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setObjectName(_fromUtf8("menuFile"))
-        self.menuReports = QtGui.QMenu(self.menubar)
-        self.menuReports.setObjectName(_fromUtf8("menuReports"))
-        self.menuHelp = QtGui.QMenu(self.menubar)
-        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
-        self.menuPublishing = QtGui.QMenu(self.menubar)
-        self.menuPublishing.setObjectName(_fromUtf8("menuPublishing"))
+        self.menubar.setObjectName("menubar")
+        self.menuFile = QtWidgets.QMenu(self.menubar)
+        self.menuFile.setObjectName("menuFile")
+        self.menuReports = QtWidgets.QMenu(self.menubar)
+        self.menuReports.setObjectName("menuReports")
+        self.menuHelp = QtWidgets.QMenu(self.menubar)
+        self.menuHelp.setObjectName("menuHelp")
+        self.menuPublishing = QtWidgets.QMenu(self.menubar)
+        self.menuPublishing.setObjectName("menuPublishing")
         MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(MainWindow)
-        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        self.actionMXD_Data_Sources_Report = QtGui.QAction(MainWindow)
-        self.actionMXD_Data_Sources_Report.setObjectName(_fromUtf8("actionMXD_Data_Sources_Report"))
-        self.actionExit = QtGui.QAction(MainWindow)
-        self.actionExit.setObjectName(_fromUtf8("actionExit"))
-        self.actionGetInstallInfo = QtGui.QAction(MainWindow)
-        self.actionGetInstallInfo.setObjectName(_fromUtf8("actionGetInstallInfo"))
-        self.actionGetExecutablePath = QtGui.QAction(MainWindow)
-        self.actionGetExecutablePath.setObjectName(_fromUtf8("actionGetExecutablePath"))
-        self.actionPublish_Services = QtGui.QAction(MainWindow)
-        self.actionPublish_Services.setObjectName(_fromUtf8("actionPublish_Services"))
-        self.actionAbout = QtGui.QAction(MainWindow)
-        self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
-        self.actionTestLogWindow = QtGui.QAction(MainWindow)
-        self.actionTestLogWindow.setObjectName(_fromUtf8("actionTestLogWindow"))
+        self.actionMXD_Data_Sources_Report = QtWidgets.QAction(MainWindow)
+        self.actionMXD_Data_Sources_Report.setObjectName("actionMXD_Data_Sources_Report")
+        self.actionExit = QtWidgets.QAction(MainWindow)
+        self.actionExit.setObjectName("actionExit")
+        self.actionGetInstallInfo = QtWidgets.QAction(MainWindow)
+        self.actionGetInstallInfo.setObjectName("actionGetInstallInfo")
+        self.actionGetExecutablePath = QtWidgets.QAction(MainWindow)
+        self.actionGetExecutablePath.setObjectName("actionGetExecutablePath")
+        self.actionPublish_Services = QtWidgets.QAction(MainWindow)
+        self.actionPublish_Services.setObjectName("actionPublish_Services")
+        self.actionAbout = QtWidgets.QAction(MainWindow)
+        self.actionAbout.setObjectName("actionAbout")
+        self.actionTestLogWindow = QtWidgets.QAction(MainWindow)
+        self.actionTestLogWindow.setObjectName("actionTestLogWindow")
         self.menuFile.addAction(self.actionExit)
         self.menuReports.addAction(self.actionMXD_Data_Sources_Report)
         self.menuHelp.addAction(self.actionGetInstallInfo)
@@ -98,16 +86,16 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "AGS Service Publisher", None))
-        self.menuFile.setTitle(_translate("MainWindow", "&File", None))
-        self.menuReports.setTitle(_translate("MainWindow", "Reports", None))
-        self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
-        self.menuPublishing.setTitle(_translate("MainWindow", "Publishing", None))
-        self.actionMXD_Data_Sources_Report.setText(_translate("MainWindow", "MXD Data Sources Report", None))
-        self.actionExit.setText(_translate("MainWindow", "E&xit", None))
-        self.actionGetInstallInfo.setText(_translate("MainWindow", "GetInstallInfo", None))
-        self.actionGetExecutablePath.setText(_translate("MainWindow", "GetExecutablePath", None))
-        self.actionPublish_Services.setText(_translate("MainWindow", "Publish Services", None))
-        self.actionAbout.setText(_translate("MainWindow", "About...", None))
-        self.actionTestLogWindow.setText(_translate("MainWindow", "TestLogWindow", None))
+        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "AGS Service Publisher", None, -1))
+        self.menuFile.setTitle(QtWidgets.QApplication.translate("MainWindow", "&File", None, -1))
+        self.menuReports.setTitle(QtWidgets.QApplication.translate("MainWindow", "Reports", None, -1))
+        self.menuHelp.setTitle(QtWidgets.QApplication.translate("MainWindow", "Help", None, -1))
+        self.menuPublishing.setTitle(QtWidgets.QApplication.translate("MainWindow", "Publishing", None, -1))
+        self.actionMXD_Data_Sources_Report.setText(QtWidgets.QApplication.translate("MainWindow", "MXD Data Sources Report", None, -1))
+        self.actionExit.setText(QtWidgets.QApplication.translate("MainWindow", "E&xit", None, -1))
+        self.actionGetInstallInfo.setText(QtWidgets.QApplication.translate("MainWindow", "GetInstallInfo", None, -1))
+        self.actionGetExecutablePath.setText(QtWidgets.QApplication.translate("MainWindow", "GetExecutablePath", None, -1))
+        self.actionPublish_Services.setText(QtWidgets.QApplication.translate("MainWindow", "Publish Services", None, -1))
+        self.actionAbout.setText(QtWidgets.QApplication.translate("MainWindow", "About...", None, -1))
+        self.actionTestLogWindow.setText(QtWidgets.QApplication.translate("MainWindow", "TestLogWindow", None, -1))
 

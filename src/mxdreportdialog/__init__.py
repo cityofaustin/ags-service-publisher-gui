@@ -1,5 +1,5 @@
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import Qt
+from PySide2 import QtWidgets, QtCore
+from PySide2.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config, get_configs
@@ -9,36 +9,36 @@ from mxdreportdialog import Ui_MXDReportDialog
 log = setup_logger(__name__)
 
 
-class MXDReportDialog(QtGui.QDialog, Ui_MXDReportDialog):
+class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
 
-    runReport = QtCore.pyqtSignal(tuple, tuple, tuple, str)
+    runReport = QtCore.Signal(tuple, tuple, tuple, str)
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
-        self._acceptButton = self.buttonBox.addButton('Run report', QtGui.QDialogButtonBox.AcceptRole)
+        self._acceptButton = self.buttonBox.addButton('Run report', QtWidgets.QDialogButtonBox.AcceptRole)
 
-        self.servicesTree.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
-        self.envsTree.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
+        self.servicesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        self.envsTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
 
         self.filename = ''
 
         for config_name, config in get_configs(config_dir=parent.config_dir).iteritems():
             services = config.get('services')
-            config_item = QtGui.QTreeWidgetItem(self.servicesTree)
+            config_item = QtWidgets.QTreeWidgetItem(self.servicesTree)
             config_item.setText(0, config_name)
             config_item.setText(1, 'Config Name')
             config_item.setFlags(config_item.flags() | Qt.ItemIsTristate)
             for service_name, service_type, _ in normalize_services(services):
-                service_item = QtGui.QTreeWidgetItem(config_item)
+                service_item = QtWidgets.QTreeWidgetItem(config_item)
                 service_item.setText(0, service_name)
                 service_item.setText(1, '{} Service'.format(service_type))
                 service_item.setCheckState(0, Qt.Unchecked)
         user_config = get_config('userconfig', config_dir=parent.config_dir)
         for env_name, env in user_config['environments'].iteritems():
-            env_item = QtGui.QTreeWidgetItem(self.envsTree)
+            env_item = QtWidgets.QTreeWidgetItem(self.envsTree)
             env_item.setText(0, env_name)
             env_item.setText(1, 'Environment')
             env_item.setCheckState(0, Qt.Unchecked)
@@ -91,7 +91,7 @@ class MXDReportDialog(QtGui.QDialog, Ui_MXDReportDialog):
         self.runReport.emit(included_configs, included_services, included_envs, self.filename)
 
     def select_output_filename(self):
-        self.filename = QtGui.QFileDialog.getSaveFileName(
+        self.filename, _filter = QtWidgets.QFileDialog.getSaveFileName(
             self,
             'Output filename', self.filename,
             'Comma-separated value (CSV) files (*.csv)'
