@@ -1,3 +1,6 @@
+from collections import OrderedDict
+from itertools import islice
+
 from PySide2 import QtWidgets, QtCore
 from PySide2.QtCore import Qt
 
@@ -20,35 +23,61 @@ class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
         self._acceptButton = self.buttonBox.addButton('Run report', QtWidgets.QDialogButtonBox.AcceptRole)
 
+        self.tabBar.setAutoHide(True)
+
         self.servicesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         self.envsTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
 
         self.filename = ''
 
+        self.configs = OrderedDict()
+        self.categories = OrderedDict()
+
         for config_name, config in get_configs(config_dir=parent.config_dir).iteritems():
-            services = config.get('services')
-            config_item = QtWidgets.QTreeWidgetItem(self.servicesTree)
-            config_item.setText(0, config_name)
-            config_item.setText(1, 'Config Name')
-            config_item.setFlags(config_item.flags() | Qt.ItemIsTristate)
-            for service_name, service_type, _ in normalize_services(services):
-                service_item = QtWidgets.QTreeWidgetItem(config_item)
-                service_item.setText(0, service_name)
-                service_item.setText(1, '{} Service'.format(service_type))
-                service_item.setCheckState(0, Qt.Unchecked)
+            self.configs[config_name] = config
+            category = config.get('category')
+            if category in self.categories:
+                self.categories[category].append(config_name)
+            else:
+                self.categories[category] = [config_name]
+
+        for category, config_names in self.categories.iteritems():
+            self.tabBar.addTab(category if category else 'Default')
+
         user_config = get_config('userconfig', config_dir=parent.config_dir)
         for env_name, env in user_config['environments'].iteritems():
             env_item = QtWidgets.QTreeWidgetItem(self.envsTree)
             env_item.setText(0, env_name)
             env_item.setText(1, 'Environment')
             env_item.setCheckState(0, Qt.Unchecked)
-        self.update_accept_button_state()
 
+        self.tab_selected(self.tabBar.currentIndex())
+        self.tabBar.currentChanged.connect(self.tab_selected)
         self.outputfileButton.clicked.connect(self.select_output_filename)
         self.buttonBox.accepted.connect(self.run_report_on_selected_items)
-        self.servicesTree.itemChanged.connect(self.update_accept_button_state)
         self.envsTree.itemChanged.connect(self.update_accept_button_state)
         self.outputfileLineEdit.textEdited.connect(self.update_accept_button_state)
+
+    def tab_selected(self, tab_index):
+        if self.servicesTree.receivers(QtCore.SIGNAL('itemChanged(QTreeWidgetItem*,int)')) > 0:
+            self.servicesTree.itemChanged.disconnect()
+        self.servicesTree.clear()
+        if tab_index >= 0:
+            category, config_names = next(islice(self.categories.iteritems(), tab_index, None))
+            for config_name, config in self.configs.iteritems():
+                if config.get('category') == category:
+                    services = config.get('services')
+                    config_item = QtWidgets.QTreeWidgetItem(self.servicesTree)
+                    config_item.setText(0, config_name)
+                    config_item.setText(1, 'Config Name')
+                    config_item.setFlags(config_item.flags() | Qt.ItemIsTristate)
+                    for service_name, service_type, _ in normalize_services(services):
+                        service_item = QtWidgets.QTreeWidgetItem(config_item)
+                        service_item.setText(0, service_name)
+                        service_item.setText(1, '{} Service'.format(service_type))
+                        service_item.setCheckState(0, Qt.Unchecked)
+        self.update_accept_button_state()
+        self.servicesTree.itemChanged.connect(self.update_accept_button_state)
 
     def update_accept_button_state(self):
         log.debug('Updating accept button state')

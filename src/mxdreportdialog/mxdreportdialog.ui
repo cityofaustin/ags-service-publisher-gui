@@ -35,6 +35,9 @@
         </widget>
        </item>
        <item>
+        <widget class="QTabBar" name="tabBar" native="true"/>
+       </item>
+       <item>
         <widget class="QTreeWidget" name="servicesTree">
          <property name="alternatingRowColors">
           <bool>true</bool>
@@ -151,6 +154,18 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QTabBar</class>
+   <extends>QWidget</extends>
+   <header>PySide2.QtWidgets</header>
+   <container>1</container>
+   <slots>
+    <signal>currentChanged(int)</signal>
+    <slot>setCurrentIndex(int)</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
