@@ -4,7 +4,7 @@ from PySide2.QtCore import Qt
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config, get_configs
 from ags_service_publisher.services import normalize_services
-from mxdreportdialog import Ui_MXDReportDialog
+from mxdreportdialog_ui import Ui_MXDReportDialog
 
 log = setup_logger(__name__)
 

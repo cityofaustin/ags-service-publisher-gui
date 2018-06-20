@@ -5,3 +5,4 @@ dist
 *.spec
 /pyqtdeploy
 /venv
+*_ui.py

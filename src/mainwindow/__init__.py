@@ -9,7 +9,7 @@ from helpers.arcpyhelpers import get_install_info
 from helpers.pathhelpers import get_app_path, get_lib_path
 from helpers.texthelpers import escape_html
 from loghandlers.qtloghandler import QtLogHandler
-from mainwindow import Ui_MainWindow
+from mainwindow_ui import Ui_MainWindow
 from publishdialog import PublishDialog
 from mxdreportdialog import MXDReportDialog
 from resultdialog import ResultDialog
