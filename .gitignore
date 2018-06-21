@@ -6,3 +6,9 @@ dist
 /pyqtdeploy
 /venv
 *_ui.py
+/src/publishdialog/*.autosave
+/ags-service-gui.config
+/ags-service-gui.creator
+/ags-service-gui.creator.user
+/ags-service-gui.files
+/ags-service-gui.includes

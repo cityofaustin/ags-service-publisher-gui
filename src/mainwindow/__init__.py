@@ -1,12 +1,10 @@
-import os
-
 from PySide2 import QtWidgets
 from ags_service_publisher.runner import Runner, root_logger
 from ags_service_publisher.logging_io import setup_logger
 
 from aboutdialog import AboutDialog
 from helpers.arcpyhelpers import get_install_info
-from helpers.pathhelpers import get_app_path, get_lib_path
+from helpers.pathhelpers import get_app_path, get_config_dir, get_log_dir, get_report_dir
 from helpers.texthelpers import escape_html
 from loghandlers.qtloghandler import QtLogHandler
 from mainwindow_ui import Ui_MainWindow
@@ -37,15 +35,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.log_handler.messageEmitted.connect(self.log_message)
         root_logger.addHandler(self.log_handler)
 
-        self.config_dir = os.getenv(
-            'AGS_SERVICE_PUBLISHER_CONFIG_DIR',
-            os.path.abspath(os.path.join(os.path.dirname(get_lib_path()), 'configs'))
-        )
-
-        self.log_dir = os.getenv(
-            'AGS_SERVICE_PUBLISHER_LOG_DIR',
-            os.path.abspath(os.path.join(os.path.dirname(get_lib_path()), 'logs'))
-        )
+        self.config_dir = get_config_dir()
+        self.log_dir = get_log_dir()
+        self.report_dir = get_report_dir()
 
     def closeEvent(self, event):
         log.debug('closeEvent triggered')

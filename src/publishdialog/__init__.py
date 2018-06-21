@@ -1,13 +1,12 @@
-from collections import OrderedDict
-from itertools import islice
-
 from PySide2 import QtWidgets, QtCore
 from PySide2.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
-from ags_service_publisher.config_io import get_config, get_configs
-from ags_service_publisher.services import normalize_services
+from ags_service_publisher.config_io import get_config
+
 from publishdialog_ui import Ui_PublishDialog
+
+from helpers.pathhelpers import get_config_dir
 
 log = setup_logger(__name__)
 
@@ -23,26 +22,12 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
         self._acceptButton = self.buttonBox.addButton('Publish selected services', QtWidgets.QDialogButtonBox.AcceptRole)
 
-        self.tabBar.setAutoHide(True)
-
-        self.servicesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         self.instancesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
 
-        self.configs = OrderedDict()
-        self.categories = OrderedDict()
+        self.selected_configs = ()
+        self.selected_services = ()
 
-        for config_name, config in get_configs(config_dir=parent.config_dir).iteritems():
-            self.configs[config_name] = config
-            category = config.get('category')
-            if category in self.categories:
-                self.categories[category].append(config_name)
-            else:
-                self.categories[category] = [config_name]
-
-        for category, config_names in self.categories.iteritems():
-            self.tabBar.addTab(category if category else 'Default')
-
-        user_config = get_config('userconfig', config_dir=parent.config_dir)
+        user_config = get_config('userconfig', config_dir=get_config_dir())
         for env_name, env in user_config['environments'].iteritems():
             env_item = QtWidgets.QTreeWidgetItem(self.instancesTree)
             env_item.setText(0, env_name)
@@ -54,32 +39,15 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
                 instance_item.setText(1, 'AGS Instance')
                 instance_item.setCheckState(0, Qt.Unchecked)
 
-        self.tab_selected(self.tabBar.currentIndex())
         self.update_publish_button_state()
-        self.tabBar.currentChanged.connect(self.tab_selected)
         self.buttonBox.accepted.connect(self.publish_selected_items)
+        self.serviceTree.selectionChanged.connect(self.service_tree_selection_changed)
         self.instancesTree.itemChanged.connect(self.update_publish_button_state)
 
-    def tab_selected(self, tab_index):
-        if self.servicesTree.receivers(QtCore.SIGNAL('itemChanged(QTreeWidgetItem*,int)')) > 0:
-            self.servicesTree.itemChanged.disconnect()
-        self.servicesTree.clear()
-        if tab_index >= 0:
-            category, config_names = next(islice(self.categories.iteritems(), tab_index, None))
-            for config_name, config in self.configs.iteritems():
-                if config.get('category') == category:
-                    services = config.get('services')
-                    config_item = QtWidgets.QTreeWidgetItem(self.servicesTree)
-                    config_item.setText(0, config_name)
-                    config_item.setText(1, 'Config Name')
-                    config_item.setFlags(config_item.flags() | Qt.ItemIsTristate)
-                    for service_name, service_type, _ in normalize_services(services):
-                        service_item = QtWidgets.QTreeWidgetItem(config_item)
-                        service_item.setText(0, service_name)
-                        service_item.setText(1, '{} Service'.format(service_type))
-                        service_item.setCheckState(0, Qt.Unchecked)
+    def service_tree_selection_changed(self, selected_configs, selected_services):
+        self.selected_configs = selected_configs
+        self.selected_services = selected_services
         self.update_publish_button_state()
-        self.servicesTree.itemChanged.connect(self.update_publish_button_state)
 
     def update_publish_button_state(self):
         log.debug('Updating publish button state')
@@ -90,23 +58,8 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
 
     def get_selected_items(self):
         log.debug('Getting selected items')
-        included_configs = []
-        included_services = []
         included_envs = []
         included_instances = []
-        services_root = self.servicesTree.invisibleRootItem()
-        for i in range(services_root.childCount()):
-            config_item = services_root.child(i)
-            if config_item.checkState(0) in (Qt.Checked, Qt.PartiallyChecked):
-                config_name = str(config_item.text(0))
-                included_configs.append(config_name)
-                log.debug('Selected config name: {}'.format(config_name))
-            for j in range(config_item.childCount()):
-                service_item = config_item.child(j)
-                if service_item.checkState(0) == Qt.Checked:
-                    service_name = str(service_item.text(0))
-                    included_services.append(service_name)
-                    log.debug('Selected service name: {}'.format(service_name))
         instances_root = self.instancesTree.invisibleRootItem()
         for i in range(instances_root.childCount()):
             env_item = instances_root.child(i)
@@ -120,7 +73,7 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
                     instance_name = str(instance_item.text(0))
                     included_instances.append(instance_name)
                     log.debug('Selected instance name: {}'.format(instance_name))
-        return map(tuple, (included_configs, included_services, included_envs, included_instances))
+        return map(tuple, (self.selected_configs, self.selected_services, included_envs, included_instances))
 
     def publish_selected_items(self):
         self.publishSelected.emit(*self.get_selected_items())
