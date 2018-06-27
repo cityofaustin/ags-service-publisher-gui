@@ -39,11 +39,11 @@ class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
         self.update_accept_button_state()
         self.outputfileButton.clicked.connect(self.select_output_filename)
         self.buttonBox.accepted.connect(self.run_report_on_selected_items)
-        self.serviceTree.selectionChanged.connect(self.service_tree_selection_changed)
+        self.serviceSelector.selectionChanged.connect(self.service_selector_selection_changed)
         self.envsTree.itemChanged.connect(self.update_accept_button_state)
         self.outputfileLineEdit.textEdited.connect(self.update_accept_button_state)
 
-    def service_tree_selection_changed(self, selected_configs, selected_services):
+    def service_selector_selection_changed(self, selected_configs, selected_services):
         self.selected_configs = selected_configs
         self.selected_services = selected_services
         self.update_accept_button_state()
@@ -67,7 +67,7 @@ class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
                 env_name = str(env_item.text(0))
                 included_envs.append(env_name)
                 log.debug('Selected env name: {}'.format(env_name))
-        return map(tuple, (self.selected_configs, self.selected_services, included_envs))
+        return self.selected_configs, self.selected_services, included_envs
 
     def run_report_on_selected_items(self):
         included_configs, included_services, included_envs = self.get_selected_items()
@@ -76,7 +76,8 @@ class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
     def select_output_filename(self):
         self.filename, _filter = QtWidgets.QFileDialog.getSaveFileName(
             self,
-            'Output filename', self.filename,
+            'Output filename',
+            self.filename,
             'Comma-separated value (CSV) files (*.csv)'
         )
         self.outputfileLineEdit.setText(self.filename)

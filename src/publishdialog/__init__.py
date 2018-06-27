@@ -41,10 +41,10 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
 
         self.update_publish_button_state()
         self.buttonBox.accepted.connect(self.publish_selected_items)
-        self.serviceTree.selectionChanged.connect(self.service_tree_selection_changed)
+        self.serviceSelector.selectionChanged.connect(self.service_selector_selection_changed)
         self.instancesTree.itemChanged.connect(self.update_publish_button_state)
 
-    def service_tree_selection_changed(self, selected_configs, selected_services):
+    def service_selector_selection_changed(self, selected_configs, selected_services):
         self.selected_configs = selected_configs
         self.selected_services = selected_services
         self.update_publish_button_state()
@@ -73,7 +73,7 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
                     instance_name = str(instance_item.text(0))
                     included_instances.append(instance_name)
                     log.debug('Selected instance name: {}'.format(instance_name))
-        return map(tuple, (self.selected_configs, self.selected_services, included_envs, included_instances))
+        return self.selected_configs, self.selected_services, included_envs, included_instances
 
     def publish_selected_items(self):
         self.publishSelected.emit(*self.get_selected_items())

@@ -35,7 +35,7 @@
         </widget>
        </item>
        <item>
-        <widget class="ServiceTree" name="serviceTree" native="true">
+        <widget class="ServiceSelector" name="serviceSelector" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -140,9 +140,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ServiceTree</class>
+   <class>ServiceSelector</class>
    <extends>QWidget</extends>
-   <header>servicetree.h</header>
+   <header>serviceselector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
