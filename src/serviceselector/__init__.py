@@ -53,7 +53,8 @@ class ServiceSelector(QtWidgets.QWidget):
             config_item.setFlags(config_item.flags() | QtCore.Qt.ItemIsTristate)
 
             services = config.get('services')
-            for service_name, service_type, _ in (normalize_services(services)):
+            default_service_properties = config.get('default_service_properties')
+            for service_name, service_type, _ in normalize_services(services, default_service_properties):
                 service_item = CheckableItem(service_name)
                 config_item.appendRow((service_item, QtGui.QStandardItem('{} Service'.format(service_type)), QtGui.QStandardItem(category)))
             self.model.appendRow((config_item, QtGui.QStandardItem('Config Name'), QtGui.QStandardItem(category)))
