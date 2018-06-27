@@ -20,7 +20,8 @@ class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
         self.setupUi(self)
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
-        self._acceptButton = self.buttonBox.addButton('Run report', QtWidgets.QDialogButtonBox.AcceptRole)
+        self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
+        self._acceptButton.setText('Run report')
 
         self.envsTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
 

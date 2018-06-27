@@ -20,7 +20,8 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
         self.setupUi(self)
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
-        self._acceptButton = self.buttonBox.addButton('Publish selected services', QtWidgets.QDialogButtonBox.AcceptRole)
+        self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
+        self._acceptButton.setText('Publish selected services')
 
         self.instancesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
 
