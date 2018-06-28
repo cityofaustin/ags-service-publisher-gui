@@ -4,9 +4,9 @@ from PySide2.QtCore import Qt
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config
 
-from publishdialog_ui import Ui_PublishDialog
+from .publishdialog_ui import Ui_PublishDialog
 
-from helpers.pathhelpers import get_config_dir
+from ..helpers.pathhelpers import get_config_dir
 
 log = setup_logger(__name__)
 
@@ -29,7 +29,7 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
         self.selected_services = ()
 
         user_config = get_config('userconfig', config_dir=get_config_dir())
-        for env_name, env in user_config['environments'].iteritems():
+        for env_name, env in user_config['environments'].items():
             env_item = QtWidgets.QTreeWidgetItem(self.instancesTree)
             env_item.setText(0, env_name)
             env_item.setText(1, 'Environment')

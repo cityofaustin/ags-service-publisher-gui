@@ -1,12 +1,10 @@
-from collections import OrderedDict
-
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_configs
 from ags_service_publisher.services import normalize_services
 
-from helpers.pathhelpers import get_config_dir
+from ..helpers.pathhelpers import get_config_dir
 
 log = setup_logger(__name__)
 
@@ -41,7 +39,7 @@ class ServiceSelector(QtWidgets.QWidget):
         categories = []
         no_category_count = 0
 
-        for config_name, config in configs.iteritems():
+        for config_name, config in configs.items():
             category = config.get('category')
             if category:
                 if category not in categories:

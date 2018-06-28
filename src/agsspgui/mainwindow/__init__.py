@@ -2,17 +2,17 @@ from PySide2 import QtWidgets
 from ags_service_publisher.runner import Runner, root_logger
 from ags_service_publisher.logging_io import setup_logger
 
-from aboutdialog import AboutDialog
-from helpers.arcpyhelpers import get_install_info
-from helpers.pathhelpers import get_app_path, get_config_dir, get_log_dir, get_report_dir
-from helpers.texthelpers import escape_html
-from loghandlers.qtloghandler import QtLogHandler
-from mainwindow_ui import Ui_MainWindow
-from publishdialog import PublishDialog
-from mxdreportdialog import MXDReportDialog
-from resultdialog import ResultDialog
-from workers.subprocessworker import SubprocessWorker
-from workers.workerpool import WorkerPool
+from ..aboutdialog import AboutDialog
+from ..helpers.arcpyhelpers import get_install_info
+from ..helpers.pathhelpers import get_app_path, get_config_dir, get_log_dir, get_report_dir
+from ..helpers.texthelpers import escape_html
+from ..loghandlers.qtloghandler import QtLogHandler
+from .mainwindow_ui import Ui_MainWindow
+from ..publishdialog import PublishDialog
+from ..mxdreportdialog import MXDReportDialog
+from ..resultdialog import ResultDialog
+from ..workers.subprocessworker import SubprocessWorker
+from ..workers.workerpool import WorkerPool
 
 log = setup_logger(__name__)
 
