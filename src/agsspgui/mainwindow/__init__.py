@@ -99,7 +99,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             result_dialog.setWindowTitle('ArcGIS Install Info - AGS Service Publisher')
             result_dialog.setIcon(QtWidgets.QMessageBox.Information)
             result_dialog.setText(str(get_install_info()))
-        except StandardError as e:
+        except Exception as e:
             result_dialog.setWindowTitle('Error - AGS Service Publisher')
             result_dialog.setIcon(QtWidgets.QMessageBox.Critical)
             result_dialog.setText(str(e))
@@ -113,7 +113,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             result_dialog.setWindowTitle('Executable Path - AGS Service Publisher')
             result_dialog.setIcon(QtWidgets.QMessageBox.Information)
             result_dialog.setText(get_app_path())
-        except StandardError as e:
+        except Exception as e:
             result_dialog.setWindowTitle('Error - AGS Service Publisher')
             result_dialog.setIcon(QtWidgets.QMessageBox.Critical)
             result_dialog.setText(str(e))
