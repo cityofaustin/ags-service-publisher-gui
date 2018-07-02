@@ -5,7 +5,7 @@ from archook import get_arcpy
 try:
     get_arcpy()
 except ImportError:
-    print 'Unable to locate arcpy directory'
+    print('Unable to locate arcpy directory')
 
 # Additional tweaks to placate arcpy
 from types import ModuleType
