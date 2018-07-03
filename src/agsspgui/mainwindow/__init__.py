@@ -95,16 +95,31 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def get_install_info(self):
         result_dialog = ResultDialog(self)
 
-        try:
-            result_dialog.setWindowTitle('ArcGIS Install Info - AGS Service Publisher')
-            result_dialog.setIcon(QtWidgets.QMessageBox.Information)
-            result_dialog.setText(str(get_install_info()))
-        except Exception as e:
-            result_dialog.setWindowTitle('Error - AGS Service Publisher')
-            result_dialog.setIcon(QtWidgets.QMessageBox.Critical)
-            result_dialog.setText(str(e))
-        finally:
-            result_dialog.exec_()
+        def show_install_info_result(worker_id, exitcode, result):
+            try:
+                if exitcode != 0:
+                    raise RuntimeError(
+                        'An error occurred in worker {} (exit code: {}) while getting ArcGIS Install Info: {}'
+                        .format(worker_id, exitcode, result)
+                    )
+                result_dialog.setWindowTitle('ArcGIS Install Info - AGS Service Publisher')
+                result_dialog.setIcon(QtWidgets.QMessageBox.Information)
+                result_dialog.setText(str(result))
+            except Exception as e:
+                result_dialog.setWindowTitle('Error - AGS Service Publisher')
+                result_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+                result_dialog.setText(str(e))
+            finally:
+                result_dialog.exec_()
+
+        worker = SubprocessWorker(
+            target=get_install_info
+        )
+        worker.messageEmitted.connect(self.handle_worker_message)
+        worker.resultEmitted.connect(self.handle_worker_result)
+        worker.resultEmitted.connect(show_install_info_result)
+        self.worker_pool.add_worker(worker)
+        self.worker_pool.start_worker(worker.id)
 
     def get_executable_path(self):
         result_dialog = ResultDialog(self)
