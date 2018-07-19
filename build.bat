@@ -2,7 +2,7 @@
 
 setlocal
 
-call "buildtemplates.bat"
+call "%~dp0buildtemplates.bat"
 
 pyinstaller ^
     --onefile ^
@@ -14,4 +14,4 @@ pyinstaller ^
     --clean ^
     --noconsole ^
     -n ags_service_publisher_gui ^
-    .\src\main.pyw
+    %~dp0src\main.pyw
