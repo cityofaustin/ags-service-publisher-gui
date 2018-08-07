@@ -10,6 +10,7 @@ from loghandlers.qtloghandler import QtLogHandler
 from mainwindow_ui import Ui_MainWindow
 from publishdialog import PublishDialog
 from mxdreportdialog import MXDReportDialog
+from datasetusagesreportdialog import DatasetUsagesReportDialog
 from resultdialog import ResultDialog
 from workers.subprocessworker import SubprocessWorker
 from workers.workerpool import WorkerPool
@@ -23,6 +24,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.actionPublish_Services.triggered.connect(self.show_publish_dialog)
         self.actionMXD_Data_Sources_Report.triggered.connect(self.show_mxd_report_dialog)
+        self.actionDataset_Usages_Report.triggered.connect(self.show_dataset_usages_report_dialog)
         self.actionGetInstallInfo.triggered.connect(self.get_install_info)
         self.actionGetExecutablePath.triggered.connect(self.get_executable_path)
         self.actionAbout.triggered.connect(self.about)
@@ -92,6 +94,22 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.worker_pool.add_worker(worker)
         self.worker_pool.start_worker(worker.id)
 
+    def dataset_usages_report(self, included_envs, included_instances, output_filename):
+        runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir)
+        worker = SubprocessWorker(
+            target=runner.run_dataset_usages_report,
+            kwargs={
+                'included_envs': included_envs,
+                'included_instances': included_instances,
+                'output_filename': output_filename
+            }
+        )
+
+        worker.messageEmitted.connect(self.handle_worker_message)
+        worker.resultEmitted.connect(self.handle_worker_result)
+        self.worker_pool.add_worker(worker)
+        self.worker_pool.start_worker(worker.id)
+
     def get_install_info(self):
         result_dialog = ResultDialog(self)
 
@@ -140,6 +158,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             mxd_report_dialog.exec_()
         except Exception:
             log.exception('An error occurred while showing the MXD Report dialog')
+            raise
+
+    def show_dataset_usages_report_dialog(self):
+        try:
+            dataset_usages_report_dialog = DatasetUsagesReportDialog(self)
+            dataset_usages_report_dialog.runReport.connect(self.dataset_usages_report)
+            dataset_usages_report_dialog.exec_()
+        except Exception:
+            log.exception('An error occurred while showing the Dataset Usages Report dialog')
             raise
 
     def test_log_window(self):
