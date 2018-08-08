@@ -94,11 +94,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.worker_pool.add_worker(worker)
         self.worker_pool.start_worker(worker.id)
 
-    def dataset_usages_report(self, included_envs, included_instances, output_filename):
+    def dataset_usages_report(self, included_datasets, included_envs, included_instances, output_filename):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir)
         worker = SubprocessWorker(
             target=runner.run_dataset_usages_report,
             kwargs={
+                'included_datasets': included_datasets,
                 'included_envs': included_envs,
                 'included_instances': included_instances,
                 'output_filename': output_filename
