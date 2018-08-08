@@ -134,7 +134,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="outputfileLineEdit"/>
+       <widget class="QLineEdit" name="outputfileLineEdit">
+        <property name="placeholderText">
+         <string>(Optional) Output filename will be generated automatically if not specified.</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="outputfileButton">

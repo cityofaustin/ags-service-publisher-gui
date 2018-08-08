@@ -77,7 +77,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.worker_pool.start_worker(worker.id)
 
     def mxd_data_sources_report(self, included_configs, included_services, included_envs, output_filename):
-        runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir)
+        runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
         worker = SubprocessWorker(
             target=runner.run_mxd_data_sources_report,
             kwargs={
@@ -95,7 +95,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.worker_pool.start_worker(worker.id)
 
     def dataset_usages_report(self, included_datasets, included_envs, included_instances, output_filename):
-        runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir)
+        runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
         worker = SubprocessWorker(
             target=runner.run_dataset_usages_report,
             kwargs={

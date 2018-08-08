@@ -25,8 +25,6 @@ class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
 
         self.envsTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
 
-        self.filename = ''
-
         self.selected_configs = ()
         self.selected_services = ()
 
@@ -42,7 +40,6 @@ class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
         self.buttonBox.accepted.connect(self.run_report_on_selected_items)
         self.serviceSelector.selectionChanged.connect(self.service_selector_selection_changed)
         self.envsTree.itemChanged.connect(self.update_accept_button_state)
-        self.outputfileLineEdit.textEdited.connect(self.update_accept_button_state)
 
     def service_selector_selection_changed(self, selected_configs, selected_services):
         self.selected_configs = selected_configs
@@ -52,10 +49,9 @@ class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
     def update_accept_button_state(self):
         log.debug('Updating accept button state')
         included_configs, included_services, included_envs = self.get_selected_items()
-        self.filename = self.outputfileLineEdit.text()
         self._acceptButton.setEnabled(
-            (len(included_configs) > 0 and len(included_envs) > 0)
-            and len(self.filename) > 0
+            len(included_configs) > 0 and
+            len(included_envs) > 0
         )
 
     def get_selected_items(self):
@@ -72,14 +68,14 @@ class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
 
     def run_report_on_selected_items(self):
         included_configs, included_services, included_envs = self.get_selected_items()
-        self.runReport.emit(included_configs, included_services, included_envs, self.filename)
+        self.runReport.emit(included_configs, included_services, included_envs, self.outputfileLineEdit.text() or None)
 
     def select_output_filename(self):
-        self.filename, _filter = QtWidgets.QFileDialog.getSaveFileName(
+        filename, _filter = QtWidgets.QFileDialog.getSaveFileName(
             self,
             'Output filename',
-            self.filename,
+            self.outputfileLineEdit.text(),
             'Comma-separated value (CSV) files (*.csv)'
         )
-        self.outputfileLineEdit.setText(self.filename)
+        self.outputfileLineEdit.setText(filename)
         self.update_accept_button_state()

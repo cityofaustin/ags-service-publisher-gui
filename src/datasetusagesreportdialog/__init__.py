@@ -26,8 +26,6 @@ class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog)
 
         self.instancesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
 
-        self.filename = ''
-
         user_config = get_config('userconfig', config_dir=get_config_dir())
         for env_name, env in user_config['environments'].iteritems():
             env_item = QtWidgets.QTreeWidgetItem(self.instancesTree)
@@ -44,15 +42,12 @@ class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog)
         self.outputfileButton.clicked.connect(self.select_output_filename)
         self.buttonBox.accepted.connect(self.run_report_on_selected_items)
         self.instancesTree.itemChanged.connect(self.update_accept_button_state)
-        self.outputfileLineEdit.textEdited.connect(self.update_accept_button_state)
 
     def update_accept_button_state(self):
         log.debug('Updating accept button state')
         included_datasets, included_envs, included_instances = self.get_selected_items()
-        self.filename = self.outputfileLineEdit.text()
         self._acceptButton.setEnabled(
-            len(included_envs) > 0
-            and len(self.filename) > 0
+            len(included_instances) > 0
         )
 
     def get_selected_items(self):
@@ -80,14 +75,14 @@ class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog)
 
     def run_report_on_selected_items(self):
         included_datasets, included_envs, included_instances = self.get_selected_items()
-        self.runReport.emit(included_datasets, included_envs, included_instances, self.filename)
+        self.runReport.emit(included_datasets, included_envs, included_instances, self.outputfileLineEdit.text() or None)
 
     def select_output_filename(self):
-        self.filename, _filter = QtWidgets.QFileDialog.getSaveFileName(
+        filename, _filter = QtWidgets.QFileDialog.getSaveFileName(
             self,
             'Output filename',
-            self.filename,
+            self.outputfileLineEdit.text(),
             'Comma-separated value (CSV) files (*.csv)'
         )
-        self.outputfileLineEdit.setText(self.filename)
+        self.outputfileLineEdit.setText(filename)
         self.update_accept_button_state()
