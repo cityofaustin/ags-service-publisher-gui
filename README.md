@@ -21,7 +21,7 @@ It currently enables users to publish services to ArcGIS Server and run a number
 
 ## Tips
 
-- You can use [`fnmatch`][8]-style wildcards in the Included Datasets input box on the Dataset Usages Report interface. For example entering `CouncilDistrict*` would match both the `CouncilDistrictMap` and `CouncilDistrictsFill` services.
+- You can use [`fnmatch`][1]-style wildcards in the Included Datasets input box on the Dataset Usages Report interface. For example entering `CouncilDistrict*` would match both the `CouncilDistrictMap` and `CouncilDistrictsFill` services.
 - The following environment variables are recognized:
     - `AGS_SERVICE_PUBLISHER_CONFIG_DIR`: Allows you to override which directory is used for your configuration files. Defaults to the
       `configs` directory beneath the executable's directory.
@@ -51,3 +51,5 @@ TODO
 As a work of the City of Austin, this project is in the public domain within the United States.
 
 Additionally, we waive copyright and related rights in the work worldwide through the [CC0 1.0 Universal public domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
+
+[1]: https://docs.python.org/2/library/fnmatch.html
