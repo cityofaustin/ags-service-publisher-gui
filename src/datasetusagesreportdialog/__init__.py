@@ -1,5 +1,5 @@
-from Qt import QtWidgets, QtCore, QtCompat
-from Qt.QtCore import Qt
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config
@@ -12,28 +12,28 @@ from helpers.pathhelpers import get_config_dir
 log = setup_logger(__name__)
 
 
-class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog):
+class DatasetUsagesReportDialog(QtGui.QDialog, Ui_DatasetUsagesReportDialog):
 
-    runReport = QtCore.Signal(tuple, tuple, tuple, str)
+    runReport = QtCore.pyqtSignal(tuple, tuple, tuple, str)
 
     def __init__(self, parent=None):
-        QtWidgets.QDialog.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
-        self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
+        self._acceptButton = self.buttonBox.button(QtGui.QDialogButtonBox.Ok)
         self._acceptButton.setText('Run report')
 
-        QtCompat.QHeaderView.setSectionResizeMode(self.instancesTree.header(), 0, QtWidgets.QHeaderView.Stretch)
+        self.instancesTree.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
 
         user_config = get_config('userconfig', config_dir=get_config_dir())
         for env_name, env in user_config['environments'].iteritems():
-            env_item = QtWidgets.QTreeWidgetItem(self.instancesTree)
+            env_item = QtGui.QTreeWidgetItem(self.instancesTree)
             env_item.setText(0, env_name)
             env_item.setText(1, 'Environment')
             env_item.setFlags(env_item.flags() | Qt.ItemIsTristate)
             for instance_name in env.get('ags_instances'):
-                instance_item = QtWidgets.QTreeWidgetItem(env_item)
+                instance_item = QtGui.QTreeWidgetItem(env_item)
                 instance_item.setText(0, instance_name)
                 instance_item.setText(1, 'AGS Instance')
                 instance_item.setCheckState(0, Qt.Unchecked)
@@ -75,10 +75,10 @@ class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog)
 
     def run_report_on_selected_items(self):
         included_datasets, included_envs, included_instances = map(tuple, self.get_selected_items())
-        self.runReport.emit(included_datasets, included_envs, included_instances, self.outputfileLineEdit.text() or None)
+        self.runReport.emit(included_datasets, included_envs, included_instances, self.outputfileLineEdit.text() or '')
 
     def select_output_filename(self):
-        filename, _filter = QtCompat.QFileDialog.getSaveFileName(
+        filename = QtGui.QFileDialog.getSaveFileName(
             self,
             'Output filename',
             self.outputfileLineEdit.text(),

@@ -1,5 +1,5 @@
-from Qt import QtWidgets, QtCore, QtCompat
-from Qt.QtCore import Qt
+from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config
@@ -11,31 +11,31 @@ from helpers.pathhelpers import get_config_dir
 log = setup_logger(__name__)
 
 
-class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
+class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
 
-    publishSelected = QtCore.Signal(tuple, tuple, tuple, tuple)
+    publishSelected = QtCore.pyqtSignal(tuple, tuple, tuple, tuple)
 
     def __init__(self, parent=None):
-        QtWidgets.QDialog.__init__(self, parent)
+        QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
-        self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
+        self._acceptButton = self.buttonBox.button(QtGui.QDialogButtonBox.Ok)
         self._acceptButton.setText('Publish selected services')
 
-        QtCompat.QHeaderView.setSectionResizeMode(self.instancesTree.header(), 0, QtWidgets.QHeaderView.Stretch)
+        self.instancesTree.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
 
         self.selected_configs = ()
         self.selected_services = ()
 
         user_config = get_config('userconfig', config_dir=get_config_dir())
         for env_name, env in user_config['environments'].iteritems():
-            env_item = QtWidgets.QTreeWidgetItem(self.instancesTree)
+            env_item = QtGui.QTreeWidgetItem(self.instancesTree)
             env_item.setText(0, env_name)
             env_item.setText(1, 'Environment')
             env_item.setFlags(env_item.flags() | Qt.ItemIsTristate)
             for instance_name in env.get('ags_instances'):
-                instance_item = QtWidgets.QTreeWidgetItem(env_item)
+                instance_item = QtGui.QTreeWidgetItem(env_item)
                 instance_item.setText(0, instance_name)
                 instance_item.setText(1, 'AGS Instance')
                 instance_item.setCheckState(0, Qt.Unchecked)

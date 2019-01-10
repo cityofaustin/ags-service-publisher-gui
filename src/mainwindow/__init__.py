@@ -1,4 +1,4 @@
-from Qt import QtWidgets
+from PyQt4 import QtGui
 from ags_service_publisher.runner import Runner, root_logger
 from ags_service_publisher.logging_io import setup_logger
 
@@ -18,9 +18,9 @@ from workers.workerpool import WorkerPool
 log = setup_logger(__name__)
 
 
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
-        QtWidgets.QMainWindow.__init__(self, parent)
+        QtGui.QMainWindow.__init__(self, parent)
         self.setupUi(self)
         self.actionPublish_Services.triggered.connect(self.show_publish_dialog)
         self.actionMXD_Data_Sources_Report.triggered.connect(self.show_mxd_report_dialog)
@@ -43,15 +43,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def closeEvent(self, event):
         log.debug('closeEvent triggered')
-        result = QtWidgets.QMessageBox.question(
+        result = QtGui.QMessageBox.question(
             self,
             'Exit - AGS Service Publisher',
             'Are you sure you want to exit?',
-            QtWidgets.QMessageBox.Yes,
-            QtWidgets.QMessageBox.No
+            QtGui.QMessageBox.Yes,
+            QtGui.QMessageBox.No
         )
 
-        if result == QtWidgets.QMessageBox.Yes:
+        if result == QtGui.QMessageBox.Yes:
             self.worker_pool.stop_all_workers()
             log.debug('Exiting application!')
             event.accept()
@@ -116,11 +116,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         try:
             result_dialog.setWindowTitle('ArcGIS Install Info - AGS Service Publisher')
-            result_dialog.setIcon(QtWidgets.QMessageBox.Information)
+            result_dialog.setIcon(QtGui.QMessageBox.Information)
             result_dialog.setText(str(get_install_info()))
         except StandardError as e:
             result_dialog.setWindowTitle('Error - AGS Service Publisher')
-            result_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+            result_dialog.setIcon(QtGui.QMessageBox.Critical)
             result_dialog.setText(str(e))
         finally:
             result_dialog.exec_()
@@ -130,11 +130,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         try:
             result_dialog.setWindowTitle('Executable Path - AGS Service Publisher')
-            result_dialog.setIcon(QtWidgets.QMessageBox.Information)
+            result_dialog.setIcon(QtGui.QMessageBox.Information)
             result_dialog.setText(get_app_path())
         except StandardError as e:
             result_dialog.setWindowTitle('Error - AGS Service Publisher')
-            result_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+            result_dialog.setIcon(QtGui.QMessageBox.Critical)
             result_dialog.setText(str(e))
         finally:
             result_dialog.exec_()
