@@ -1,7 +1,7 @@
 import multiprocessing
 import sys
 
-from Qt import QtWidgets
+from PyQt4 import QtGui
 from ags_service_publisher.logging_io import setup_logger, setup_console_log_handler
 from ags_service_publisher.runner import root_logger
 
@@ -15,7 +15,7 @@ def main():
     multiprocessing.freeze_support()
     setup_console_log_handler(root_logger, verbose=True)
     log.debug('Application started: {}'.format(get_app_path()))
-    app = QtWidgets.QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     main_window = MainWindow()
     main_window.show()
     sys.exit(app.exec_())

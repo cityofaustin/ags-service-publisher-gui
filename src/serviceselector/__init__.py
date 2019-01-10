@@ -1,7 +1,6 @@
 from collections import OrderedDict
-from pkg_resources import parse_version
 
-from Qt import QtWidgets, QtCore, QtGui, QtCompat, __qt_version__
+from PyQt4 import QtGui, QtCore
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_configs
@@ -12,9 +11,9 @@ from helpers.pathhelpers import get_config_dir
 log = setup_logger(__name__)
 
 
-class ServiceSelector(QtWidgets.QWidget):
+class ServiceSelector(QtGui.QWidget):
 
-    selectionChanged = QtCore.Signal(tuple, tuple)
+    selectionChanged = QtCore.pyqtSignal(tuple, tuple)
 
     (
         NAME,
@@ -25,13 +24,11 @@ class ServiceSelector(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(ServiceSelector, self).__init__(parent)
 
-        self.layout = QtWidgets.QVBoxLayout()
+        self.layout = QtGui.QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
 
-        self.tab_widget = QtWidgets.QTabWidget(self)
-        if parse_version(__qt_version__) >= parse_version('5.4'):
-            self.tab_widget.setTabBarAutoHide(True)
+        self.tab_widget = QtGui.QTabWidget(self)
         self.layout.addWidget(self.tab_widget)
 
         self.model = ServiceModel(0, 3, self)
@@ -58,13 +55,13 @@ class ServiceSelector(QtWidgets.QWidget):
             default_service_properties = config.get('default_service_properties')
             for service_name, service_type, _ in normalize_services(services, default_service_properties):
                 service_item = CheckableItem(service_name)
-                config_item.appendRow((service_item, QtGui.QStandardItem('{} Service'.format(service_type)), QtGui.QStandardItem(category)))
-            self.model.appendRow((config_item, QtGui.QStandardItem('Config Name'), QtGui.QStandardItem(category)))
+                config_item.appendRow((service_item, QtGui.QStandardItem('{} Service'.format(service_type)), QtGui.QStandardItem(category) if category else QtGui.QStandardItem()))
+            self.model.appendRow((config_item, QtGui.QStandardItem('Config Name'), QtGui.QStandardItem(category) if category else QtGui.QStandardItem()))
 
         self.add_tab(self.model, 'All')
 
         for category in categories:
-            proxy_model = QtCore.QSortFilterProxyModel(self)
+            proxy_model = QtGui.QSortFilterProxyModel(self)
             proxy_model.setSourceModel(self.model)
             proxy_model.setFilterKeyColumn(self.CATEGORY)
             proxy_model.setFilterRegExp(QtCore.QRegExp(category, QtCore.Qt.CaseSensitive, QtCore.QRegExp.FixedString))
@@ -79,15 +76,15 @@ class ServiceSelector(QtWidgets.QWidget):
         self.model.checkedItemsChanged.connect(self.selected_items_changed)
 
     def add_tab(self, model, heading):
-        tree_view = QtWidgets.QTreeView()
-        tree_view.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        tree_view = QtGui.QTreeView()
+        tree_view.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         tree_view.setModel(model)
         tree_view.setAlternatingRowColors(True)
-        tree_view.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
-        tree_view.setFrameShape(QtWidgets.QFrame.NoFrame)
+        tree_view.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
+        tree_view.setFrameShape(QtGui.QFrame.NoFrame)
         tree_view.header().setMinimumSectionSize(100)
         tree_view.header().setStretchLastSection(False)
-        QtCompat.QHeaderView.setSectionResizeMode(tree_view.header(), 0, QtWidgets.QHeaderView.Stretch)
+        tree_view.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
         self.tab_widget.addTab(tree_view, heading)
 
     def selected_items_changed(self):
@@ -131,8 +128,8 @@ class CheckableItem(QtGui.QStandardItem):
 
 class ServiceModel(QtGui.QStandardItemModel):
 
-    itemChecked = QtCore.Signal(CheckableItem)
-    checkedItemsChanged = QtCore.Signal()
+    itemChecked = QtCore.pyqtSignal(CheckableItem)
+    checkedItemsChanged = QtCore.pyqtSignal()
 
     def __init__(self, *args, **kwargs):
         super(ServiceModel, self).__init__(*args, **kwargs)
@@ -165,7 +162,7 @@ class ServiceModel(QtGui.QStandardItemModel):
         self.checkedItemsChanged.emit()
 
 
-class NoCategoryFilterProxyModel(QtCore.QSortFilterProxyModel):
+class NoCategoryFilterProxyModel(QtGui.QSortFilterProxyModel):
     def __init__(self, *args, **kwargs):
         super(NoCategoryFilterProxyModel, self).__init__(*args, **kwargs)
     
@@ -174,5 +171,5 @@ class NoCategoryFilterProxyModel(QtCore.QSortFilterProxyModel):
             model = self.sourceModel()
             category_index = model.index(source_row, self.category_column, source_parent)
             category = model.data(category_index)
-            return category == ''
+            return category.toString() == ''
         return True
