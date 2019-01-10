@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets
+from Qt import QtWidgets
 
 from aboutdialog_ui import Ui_AboutDialog
 

@@ -3,7 +3,7 @@ import multiprocessing
 import sys
 import traceback
 
-from PySide2 import QtCore
+from Qt import QtCore
 from ags_service_publisher.logging_io import setup_logger
 from logutils.queue import QueueHandler, QueueListener
 

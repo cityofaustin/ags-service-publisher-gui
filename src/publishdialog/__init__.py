@@ -1,5 +1,5 @@
-from PySide2 import QtWidgets, QtCore
-from PySide2.QtCore import Qt
+from Qt import QtWidgets, QtCore, QtCompat
+from Qt.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config
@@ -23,7 +23,7 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
         self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
         self._acceptButton.setText('Publish selected services')
 
-        self.instancesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        QtCompat.QHeaderView.setSectionResizeMode(self.instancesTree.header(), 0, QtWidgets.QHeaderView.Stretch)
 
         self.selected_configs = ()
         self.selected_services = ()
@@ -77,4 +77,4 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
         return self.selected_configs, self.selected_services, included_envs, included_instances
 
     def publish_selected_items(self):
-        self.publishSelected.emit(*self.get_selected_items())
+        self.publishSelected.emit(*map(tuple, self.get_selected_items()))

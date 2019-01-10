@@ -1,5 +1,5 @@
 import logging
-from PySide2 import QtCore
+from Qt import QtCore
 
 
 class QtLogHandler(logging.Handler):
