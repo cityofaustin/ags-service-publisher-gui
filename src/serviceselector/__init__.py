@@ -1,6 +1,7 @@
 from collections import OrderedDict
+from pkg_resources import parse_version
 
-from PySide2 import QtWidgets, QtCore, QtGui
+from Qt import QtWidgets, QtCore, QtGui, QtCompat, __qt_version__
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_configs
@@ -29,7 +30,8 @@ class ServiceSelector(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
         self.tab_widget = QtWidgets.QTabWidget(self)
-        self.tab_widget.setTabBarAutoHide(True)
+        if parse_version(__qt_version__) >= parse_version('5.4'):
+            self.tab_widget.setTabBarAutoHide(True)
         self.layout.addWidget(self.tab_widget)
 
         self.model = ServiceModel(0, 3, self)
@@ -85,11 +87,11 @@ class ServiceSelector(QtWidgets.QWidget):
         tree_view.setFrameShape(QtWidgets.QFrame.NoFrame)
         tree_view.header().setMinimumSectionSize(100)
         tree_view.header().setStretchLastSection(False)
-        tree_view.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        QtCompat.QHeaderView.setSectionResizeMode(tree_view.header(), 0, QtWidgets.QHeaderView.Stretch)
         self.tab_widget.addTab(tree_view, heading)
 
     def selected_items_changed(self):
-        self.selectionChanged.emit(*self.get_selected_items())
+        self.selectionChanged.emit(*map(tuple, self.get_selected_items()))
 
     def get_selected_items(self):
         log.debug('Getting selected items')

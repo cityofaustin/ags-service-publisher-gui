@@ -1,7 +1,7 @@
 import multiprocessing
 import sys
 
-from PySide2 import QtWidgets
+from Qt import QtWidgets
 from ags_service_publisher.logging_io import setup_logger, setup_console_log_handler
 from ags_service_publisher.runner import root_logger
 

@@ -1,5 +1,5 @@
-from PySide2 import QtWidgets, QtCore
-from PySide2.QtCore import Qt
+from Qt import QtWidgets, QtCore, QtCompat
+from Qt.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config
@@ -24,7 +24,7 @@ class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog)
         self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
         self._acceptButton.setText('Run report')
 
-        self.instancesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        QtCompat.QHeaderView.setSectionResizeMode(self.instancesTree.header(), 0, QtWidgets.QHeaderView.Stretch)
 
         user_config = get_config('userconfig', config_dir=get_config_dir())
         for env_name, env in user_config['environments'].iteritems():
@@ -74,11 +74,11 @@ class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog)
         return included_datasets, included_envs, included_instances
 
     def run_report_on_selected_items(self):
-        included_datasets, included_envs, included_instances = self.get_selected_items()
+        included_datasets, included_envs, included_instances = map(tuple, self.get_selected_items())
         self.runReport.emit(included_datasets, included_envs, included_instances, self.outputfileLineEdit.text() or None)
 
     def select_output_filename(self):
-        filename, _filter = QtWidgets.QFileDialog.getSaveFileName(
+        filename, _filter = QtCompat.QFileDialog.getSaveFileName(
             self,
             'Output filename',
             self.outputfileLineEdit.text(),

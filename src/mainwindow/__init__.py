@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets
+from Qt import QtWidgets
 from ags_service_publisher.runner import Runner, root_logger
 from ags_service_publisher.logging_io import setup_logger
 

@@ -131,9 +131,9 @@
       </item>
       <item>
        <widget class="QLineEdit" name="outputfileLineEdit">
-        <property name="placeholderText">
+        <!-- <property name="placeholderText">
          <string>(Optional) Output filename will be generated automatically if not specified.</string>
-        </property>
+        </property> -->
        </widget>
       </item>
       <item>

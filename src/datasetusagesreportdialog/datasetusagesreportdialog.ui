@@ -44,9 +44,9 @@
            <property name="lineWrapMode">
             <enum>QPlainTextEdit::NoWrap</enum>
            </property>
-           <property name="placeholderText">
+           <!-- <property name="placeholderText">
             <string>(Optional) Enter one or more dataset names or fnmatch-style filters, each on its own line.</string>
-           </property>
+           </property> -->
           </widget>
          </item>
         </layout>
