@@ -55,8 +55,8 @@ class ServiceSelector(QtGui.QWidget):
             default_service_properties = config.get('default_service_properties')
             for service_name, service_type, _ in normalize_services(services, default_service_properties):
                 service_item = CheckableItem(service_name)
-                config_item.appendRow((service_item, QtGui.QStandardItem('{} Service'.format(service_type)), QtGui.QStandardItem(category) if category else QtGui.QStandardItem()))
-            self.model.appendRow((config_item, QtGui.QStandardItem('Config Name'), QtGui.QStandardItem(category) if category else QtGui.QStandardItem()))
+                config_item.appendRow((service_item, QtGui.QStandardItem('{} Service'.format(service_type)), QtGui.QStandardItem(category)))
+            self.model.appendRow((config_item, QtGui.QStandardItem('Config Name'), QtGui.QStandardItem(category)))
 
         self.add_tab(self.model, 'All')
 
@@ -171,5 +171,5 @@ class NoCategoryFilterProxyModel(QtGui.QSortFilterProxyModel):
             model = self.sourceModel()
             category_index = model.index(source_row, self.category_column, source_parent)
             category = model.data(category_index)
-            return category.toString() == ''
+            return not category
         return True

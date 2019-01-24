@@ -75,7 +75,7 @@ class DatasetUsagesReportDialog(QtGui.QDialog, Ui_DatasetUsagesReportDialog):
 
     def run_report_on_selected_items(self):
         included_datasets, included_envs, included_instances = map(tuple, self.get_selected_items())
-        self.runReport.emit(included_datasets, included_envs, included_instances, self.outputfileLineEdit.text() or '')
+        self.runReport.emit(included_datasets, included_envs, included_instances, self.outputfileLineEdit.text() or None)
 
     def select_output_filename(self):
         filename = QtGui.QFileDialog.getSaveFileName(
