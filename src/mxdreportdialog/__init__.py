@@ -68,7 +68,7 @@ class MXDReportDialog(QtGui.QDialog, Ui_MXDReportDialog):
 
     def run_report_on_selected_items(self):
         included_configs, included_services, included_envs = map(tuple, self.get_selected_items())
-        self.runReport.emit(included_configs, included_services, included_envs, self.outputfileLineEdit.text() or '')
+        self.runReport.emit(included_configs, included_services, included_envs, self.outputfileLineEdit.text() or None)
 
     def select_output_filename(self):
         filename = QtGui.QFileDialog.getSaveFileName(
