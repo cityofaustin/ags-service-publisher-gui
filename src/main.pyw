@@ -1,6 +1,14 @@
 import multiprocessing
 import sys
 
+if not hasattr(sys, 'frozen'):
+    import sip
+
+    API_NAMES = ['QDate', 'QDateTime', 'QString', 'QTextStream', 'QTime', 'QUrl', 'QVariant']
+    API_VERSION = 2
+    for name in API_NAMES:
+        sip.setapi(name, API_VERSION)
+
 from PyQt4 import QtGui
 from ags_service_publisher.logging_io import setup_logger, setup_console_log_handler
 from ags_service_publisher.runner import root_logger

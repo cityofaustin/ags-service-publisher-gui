@@ -11,6 +11,7 @@ pyinstaller ^
     --exclude-module arcpy ^
     --exclude-module numpy ^
     --runtime-hook %~dp0hooks\rthooks\pyi_rth_arcpy.py ^
+    --runtime-hook %~dp0hooks\rthooks\pyi_rth_pyqt4.py ^
     --clean ^
     --noconsole ^
     --distpath %~dp0dist ^
