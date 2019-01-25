@@ -36,7 +36,7 @@ TODO
 ## TODO
 
 - Add interfaces for the other report types
-- Implement SSL support
+- ~~Implement SSL support~~ Implemented in [`ags-service-publisher/#1`](https://github.com/cityofaustin/ags-service-publisher/pull/1)
 - Expose prefix/suffix service name options
 - Add a progress/results interface in addition to the log window
 - Add filtering and searching in the log window
