@@ -20,7 +20,7 @@ It currently enables users to publish services to ArcGIS Server and run a number
 
 ## Installation
 
-1. Download the `ags_service_publisher_gui.exe` executable from the Releases tab to a directory of your choice
+1. Download the `ags_service_publisher_gui.exe` executable from the [Releases](https://github.com/cityofaustin/ags-service-publisher-gui/releases) tab to a directory of your choice
 2. Configure the application as described in the [Configuration section](https://github.com/cityofaustin/ags-service-publisher#configuration) of the `ags-service-publisher` README.
 
 ## Tips
