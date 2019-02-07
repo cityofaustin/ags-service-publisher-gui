@@ -6,7 +6,7 @@
 
 This is the graphical user interface (GUI) application for the [ArcGIS Server Service Publisher](https://github.com/cityofaustin/ags-service-publisher) Python library.
 
-It currently enables users to publish services to ArcGIS Server and run a number of different report types.
+It currently enables users to publish services to ArcGIS Server and run a number of different [report types](https://github.com/cityofaustin/ags-service-publisher#generate-reports).
 
 ## Screenshots
 
