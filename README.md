@@ -31,7 +31,12 @@ It currently enables users to publish services to ArcGIS Server and run a number
 
 ## Building
 
-TODO
+1. Download PyQt4 (`PyQt4‑4.11.4‑cp27‑cp27m‑win32.whl`) from this page: https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt4
+2. Use pip to install the downloaded wheel, e.g. `pip install PyQt4‑4.11.4‑cp27‑cp27m‑win32.whl`
+3. Add the PyQt4 directory, e.g. `<Python interpreter directory>\Lib\site-packages\PyQt4`, to your `PATH` environment variable, so that `pyuic4.bat` is available.
+4. Install the [`ags-service-publisher`](https://github.com/cityofaustin/ags-service-publisher) library per its [instructions](https://github.com/cityofaustin/ags-service-publisher#installation)
+5. Use pip to install the other development dependencies, e.g. `pip install -R requirements.txt`
+6. Run the `build.bat` script. If successful, this will output an executable to the `dist` subdirectory.
 
 ## TODO
 
