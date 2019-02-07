@@ -8,6 +8,10 @@ This is the graphical user interface (GUI) application for the [ArcGIS Server Se
 
 It currently enables users to publish services to ArcGIS Server and run a number of different report types.
 
+## Screenshots
+
+<img src="https://user-images.githubusercontent.com/8584785/52435434-7cb3bc80-2ad7-11e9-8720-6c43ecfe87ad.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/8584785/52435442-7faead00-2ad7-11e9-98cd-318db72abc33.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/8584785/52435657-fcda2200-2ad7-11e9-9f32-43969281b6ae.png" width="23%"></img> <img src="https://user-images.githubusercontent.com/8584785/52435669-01063f80-2ad8-11e9-9cde-bb0f465adab9.png" width="23%"></img> 
+
 ## Requirements
 
 - Windows 7+
