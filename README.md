@@ -32,6 +32,7 @@ It currently enables users to publish services to ArcGIS Server and run a number
     - `AGS_SERVICE_PUBLISHER_LOG_DIR`: Allows you to override which directory is used for storing log files. Defaults to the `logs`
         directory beneath the executable's directory.
     - `AGS_SERVICE_PUBLISHER_REPORT_DIR`: Allows you to override which directory is used for writing reports. Default to the `reports` directory beneath the executable's directory.
+- By default, backups are created when publishing MapServer and GeocodeServer services. A `Backups` subdirectory is created in the same directory as the source file(s), and a copy of the services to be published are placed there with a timestamp appended. To disable creating backups, uncheck the "Create backups" checkbox on the Publish Services dialog.
 
 ## Building
 

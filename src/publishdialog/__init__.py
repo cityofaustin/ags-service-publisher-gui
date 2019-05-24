@@ -13,7 +13,7 @@ log = setup_logger(__name__)
 
 class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
 
-    publishSelected = QtCore.pyqtSignal(tuple, tuple, tuple, tuple)
+    publishSelected = QtCore.pyqtSignal(tuple, tuple, tuple, tuple, bool)
 
     def __init__(self, parent=None):
         QtGui.QDialog.__init__(self, parent)
@@ -52,7 +52,7 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
 
     def update_publish_button_state(self):
         log.debug('Updating publish button state')
-        included_configs, included_services, included_envs, included_instances = self.get_selected_items()
+        included_configs, included_services, included_envs, included_instances, create_backups = self.get_selected_items()
         self._acceptButton.setEnabled(
             (len(included_configs) > 0 and len(included_instances) > 0)
         )
@@ -74,7 +74,15 @@ class PublishDialog(QtGui.QDialog, Ui_PublishDialog):
                     instance_name = str(instance_item.text(0))
                     included_instances.append(instance_name)
                     log.debug('Selected instance name: {}'.format(instance_name))
-        return self.selected_configs, self.selected_services, included_envs, included_instances
+        create_backups = self.createBackupsCheckBox.isChecked()
+        return self.selected_configs, self.selected_services, included_envs, included_instances, create_backups
 
     def publish_selected_items(self):
-        self.publishSelected.emit(*map(tuple, self.get_selected_items()))
+        included_configs, included_services, included_envs, included_instances, create_backups = self.get_selected_items()
+        self.publishSelected.emit(
+            tuple(included_configs),
+            tuple(included_services),
+            tuple(included_envs),
+            tuple(included_instances),
+            create_backups
+        )
