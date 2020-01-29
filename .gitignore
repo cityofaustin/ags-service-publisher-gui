@@ -4,7 +4,7 @@ build
 dist
 *.spec
 /pyqtdeploy
-/venv
+.venv*
 *_ui.py
 /src/publishdialog/*.autosave
 /ags-service-gui.config
