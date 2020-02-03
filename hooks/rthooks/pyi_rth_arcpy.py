@@ -1,9 +1,12 @@
-import sys
+import os, sys
 
 # Add arcpy's directories to sys.path
-from archook import get_arcpy
 try:
-    get_arcpy()
+    os.environ['PATH'] = ';'.join((r'C:\Program Files\ArcGIS\Pro\bin', os.environ['PATH']))
+    sys.path.append(r'C:\Program Files\ArcGIS\Pro\bin')
+    sys.path.append(r'C:\Program Files\ArcGIS\Pro\Resources\ArcPy')
+    sys.path.append(r'C:\Program Files\ArcGIS\Pro\Resources\ArcToolbox\Scripts')
+    sys.path.append(r'C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\Lib\site-packages')
 except ImportError:
     print 'Unable to locate arcpy directory'
 

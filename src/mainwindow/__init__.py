@@ -1,5 +1,5 @@
 from PyQt4 import QtGui
-from ags_service_publisher.runner import Runner, root_logger
+from ags_service_publisher.runner import Runner
 from ags_service_publisher.logging_io import setup_logger
 
 from aboutdialog import AboutDialog
@@ -35,7 +35,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.log_handler = QtLogHandler()
         self.log_handler.messageEmitted.connect(self.log_message)
-        root_logger.addHandler(self.log_handler)
+        log.addHandler(self.log_handler)
 
         self.config_dir = get_config_dir()
         self.log_dir = get_log_dir()
