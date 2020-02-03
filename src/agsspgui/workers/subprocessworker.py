@@ -7,7 +7,7 @@ from PyQt4 import QtCore
 from ags_service_publisher.logging_io import setup_logger
 from logutils.queue import QueueHandler, QueueListener
 
-from loghandlers.qtloghandler import QtLogHandler
+from ..loghandlers.qtloghandler import QtLogHandler
 
 log = setup_logger(__name__)
 
@@ -31,7 +31,8 @@ class SubprocessWorker(QtCore.QObject):
     messageEmitted = QtCore.pyqtSignal(int, str, str)
     resultEmitted = QtCore.pyqtSignal(int, int, object)
 
-    get_next_worker_id = itertools.count().next
+    def get_next_worker_id(self):
+        return next(itertools.count())
 
     def __init__(self, parent=None, target=None, args=(), kwargs={}, timer_check_interval=1000, log_handler=None):
         super(SubprocessWorker, self).__init__(parent)

@@ -1,6 +1,6 @@
 from PyQt4 import QtGui
 
-from aboutdialog_ui import Ui_AboutDialog
+from .aboutdialog_ui import Ui_AboutDialog
 
 
 class AboutDialog(QtGui.QDialog, Ui_AboutDialog):

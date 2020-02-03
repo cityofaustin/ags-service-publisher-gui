@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DatasetUsagesReportDialog</class>
- <widget class="QDialog" name="DatasetUsagesReportDialog">
+ <class>PublishDialog</class>
+ <widget class="QDialog" name="PublishDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">Dataset Usages Report</string>
+   <string notr="true">Publish Services</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
@@ -28,28 +28,24 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QLabel" name="includedDatasetsLabel">
-           <property name="text">
-            <string>Included Datasets:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="PlainTextEditWithPlaceholderText" name="includedDatasetsTextEdit">
-           <property name="tabChangesFocus">
-            <bool>true</bool>
-           </property>
-           <property name="lineWrapMode">
-            <enum>QPlainTextEdit::NoWrap</enum>
-           </property>
-           <property name="placeholderText">
-            <string>(Optional) Enter one or more dataset names or fnmatch-style filters, each on its own line.</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QLabel" name="serviceSelectorLabel">
+         <property name="text">
+          <string>Services to publish:</string>
+         </property>
+         <property name="buddy">
+          <cstring>serviceSelector</cstring>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="ServiceSelector" name="serviceSelector" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -58,7 +54,7 @@
        <item>
         <widget class="QLabel" name="instancesTreeLabel">
          <property name="text">
-          <string>Instances to report:</string>
+          <string>Instances to publish to:</string>
          </property>
          <property name="buddy">
           <cstring>instancesTree</cstring>
@@ -114,49 +110,26 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QWidget" name="widget" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="1" column="0" alignment="Qt::AlignRight">
+    <widget class="QCheckBox" name="createBackupsCheckBox">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QLabel" name="outputfileLabel">
-        <property name="text">
-         <string>Output file:</string>
-        </property>
-        <property name="buddy">
-         <cstring>outputfileLineEdit</cstring>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="outputfileLineEdit">
-        <property name="placeholderText">
-         <string>(Optional) Output filename will be generated automatically if not specified.</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="outputfileButton">
-        <property name="text">
-         <string>...</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="text">
+      <string>Create backups</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
-<customwidgets>
+ <customwidgets>
   <customwidget>
-   <class>PlainTextEditWithPlaceholderText</class>
-   <extends>QPlainTextEdit</extends>
-   <header>widgets/plaintexteditwithplaceholdertext.h</header>
+   <class>ServiceSelector</class>
+   <extends>QWidget</extends>
+   <header>agsspgui/serviceselector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -165,7 +138,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>DatasetUsagesReportDialog</receiver>
+   <receiver>PublishDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -181,7 +154,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>DatasetUsagesReportDialog</receiver>
+   <receiver>PublishDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

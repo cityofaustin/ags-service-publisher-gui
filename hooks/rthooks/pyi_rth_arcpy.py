@@ -8,7 +8,7 @@ try:
     sys.path.append(r'C:\Program Files\ArcGIS\Pro\Resources\ArcToolbox\Scripts')
     sys.path.append(r'C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\Lib\site-packages')
 except ImportError:
-    print 'Unable to locate arcpy directory'
+    print('Unable to locate arcpy directory')
 
 # Additional tweaks to placate arcpy
 from types import ModuleType

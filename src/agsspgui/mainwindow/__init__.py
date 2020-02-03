@@ -2,18 +2,18 @@ from PyQt4 import QtGui
 from ags_service_publisher.runner import Runner
 from ags_service_publisher.logging_io import setup_logger
 
-from aboutdialog import AboutDialog
-from helpers.arcpyhelpers import get_install_info
-from helpers.pathhelpers import get_app_path, get_config_dir, get_log_dir, get_report_dir
-from helpers.texthelpers import escape_html
-from loghandlers.qtloghandler import QtLogHandler
-from mainwindow_ui import Ui_MainWindow
-from publishdialog import PublishDialog
-from mxdreportdialog import MXDReportDialog
-from datasetusagesreportdialog import DatasetUsagesReportDialog
-from resultdialog import ResultDialog
-from workers.subprocessworker import SubprocessWorker
-from workers.workerpool import WorkerPool
+from ..aboutdialog import AboutDialog
+from ..helpers.arcpyhelpers import get_install_info
+from ..helpers.pathhelpers import get_app_path, get_config_dir, get_log_dir, get_report_dir
+from ..helpers.texthelpers import escape_html
+from ..loghandlers.qtloghandler import QtLogHandler
+from .mainwindow_ui import Ui_MainWindow
+from ..publishdialog import PublishDialog
+from ..mxdreportdialog import MXDReportDialog
+from ..datasetusagesreportdialog import DatasetUsagesReportDialog
+from ..resultdialog import ResultDialog
+from ..workers.subprocessworker import SubprocessWorker
+from ..workers.workerpool import WorkerPool
 
 log = setup_logger(__name__)
 
@@ -80,7 +80,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def mxd_data_sources_report(self, included_configs, included_services, included_envs, output_filename):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
         worker = SubprocessWorker(
-            target=runner.run_mxd_data_sources_report,
+            target=runner.run_map_data_sources_report,
             kwargs={
                 'included_configs': included_configs,
                 'included_services': included_services,
@@ -115,16 +115,31 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
     def get_install_info(self):
         result_dialog = ResultDialog(self)
 
-        try:
-            result_dialog.setWindowTitle('ArcGIS Install Info - AGS Service Publisher')
-            result_dialog.setIcon(QtGui.QMessageBox.Information)
-            result_dialog.setText(str(get_install_info()))
-        except StandardError as e:
-            result_dialog.setWindowTitle('Error - AGS Service Publisher')
-            result_dialog.setIcon(QtGui.QMessageBox.Critical)
-            result_dialog.setText(str(e))
-        finally:
-            result_dialog.exec_()
+        def show_install_info_result(worker_id, exitcode, result):
+            try:
+                if exitcode != 0:
+                    raise RuntimeError(
+                        'An error occurred in worker {} (exit code: {}) while getting ArcGIS Install Info: {}'
+                        .format(worker_id, exitcode, result)
+                    )
+                result_dialog.setWindowTitle('ArcGIS Install Info - AGS Service Publisher')
+                result_dialog.setIcon(QtGui.QMessageBox.Information)
+                result_dialog.setText(str(result))
+            except Exception as e:
+                result_dialog.setWindowTitle('Error - AGS Service Publisher')
+                result_dialog.setIcon(QtGui.QMessageBox.Critical)
+                result_dialog.setText(str(e))
+            finally:
+                result_dialog.exec_()
+
+        worker = SubprocessWorker(
+            target=get_install_info
+        )
+        worker.messageEmitted.connect(self.handle_worker_message)
+        worker.resultEmitted.connect(self.handle_worker_result)
+        worker.resultEmitted.connect(show_install_info_result)
+        self.worker_pool.add_worker(worker)
+        self.worker_pool.start_worker(worker.id)
 
     def get_executable_path(self):
         result_dialog = ResultDialog(self)
@@ -133,7 +148,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             result_dialog.setWindowTitle('Executable Path - AGS Service Publisher')
             result_dialog.setIcon(QtGui.QMessageBox.Information)
             result_dialog.setText(get_app_path())
-        except StandardError as e:
+        except Exception as e:
             result_dialog.setWindowTitle('Error - AGS Service Publisher')
             result_dialog.setIcon(QtGui.QMessageBox.Critical)
             result_dialog.setText(str(e))

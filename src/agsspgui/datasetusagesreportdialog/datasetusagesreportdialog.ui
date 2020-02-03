@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MXDReportDialog</class>
- <widget class="QDialog" name="MXDReportDialog">
+ <class>DatasetUsagesReportDialog</class>
+ <widget class="QDialog" name="DatasetUsagesReportDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">MXD Data Sources Report</string>
+   <string notr="true">Dataset Usages Report</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
@@ -28,41 +28,45 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QLabel" name="serviceSelectorLabel">
-         <property name="text">
-          <string>Services to report:</string>
-         </property>
-         <property name="buddy">
-          <cstring>serviceSelector</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="ServiceSelector" name="serviceSelector" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-           <horstretch>0</horstretch>
-           <verstretch>1</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QLabel" name="includedDatasetsLabel">
+           <property name="text">
+            <string>Included Datasets:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="PlainTextEditWithPlaceholderText" name="includedDatasetsTextEdit">
+           <property name="tabChangesFocus">
+            <bool>true</bool>
+           </property>
+           <property name="lineWrapMode">
+            <enum>QPlainTextEdit::NoWrap</enum>
+           </property>
+           <property name="placeholderText">
+            <string>(Optional) Enter one or more dataset names or fnmatch-style filters, each on its own line.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="envsTreeLabel">
+        <widget class="QLabel" name="instancesTreeLabel">
          <property name="text">
-          <string>Environments to report:</string>
+          <string>Instances to report:</string>
          </property>
          <property name="buddy">
-          <cstring>envsTree</cstring>
+          <cstring>instancesTree</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QTreeWidget" name="envsTree">
+        <widget class="QTreeWidget" name="instancesTree">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -148,11 +152,11 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
+<customwidgets>
   <customwidget>
-   <class>ServiceSelector</class>
-   <extends>QWidget</extends>
-   <header>serviceselector.h</header>
+   <class>PlainTextEditWithPlaceholderText</class>
+   <extends>QPlainTextEdit</extends>
+   <header>agsspgui/widgets/plaintexteditwithplaceholdertext.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -161,7 +165,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>MXDReportDialog</receiver>
+   <receiver>DatasetUsagesReportDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -177,7 +181,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>MXDReportDialog</receiver>
+   <receiver>DatasetUsagesReportDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

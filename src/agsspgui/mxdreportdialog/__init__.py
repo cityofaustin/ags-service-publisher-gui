@@ -4,9 +4,9 @@ from PyQt4.QtCore import Qt
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config
 
-from mxdreportdialog_ui import Ui_MXDReportDialog
+from .mxdreportdialog_ui import Ui_MXDReportDialog
 
-from helpers.pathhelpers import get_config_dir
+from ..helpers.pathhelpers import get_config_dir
 
 log = setup_logger(__name__)
 
@@ -29,7 +29,7 @@ class MXDReportDialog(QtGui.QDialog, Ui_MXDReportDialog):
         self.selected_services = ()
 
         user_config = get_config('userconfig', config_dir=get_config_dir())
-        for env_name, env in user_config['environments'].iteritems():
+        for env_name, env in user_config['environments'].items():
             env_item = QtGui.QTreeWidgetItem(self.envsTree)
             env_item.setText(0, env_name)
             env_item.setText(1, 'Environment')

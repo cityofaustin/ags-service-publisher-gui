@@ -19,8 +19,8 @@ if not hasattr(sys, 'frozen'):
 from PyQt4 import QtGui
 from ags_service_publisher.logging_io import setup_logger, setup_console_log_handler
 
-from helpers.pathhelpers import get_app_path
-from mainwindow import MainWindow
+from agsspgui.helpers.pathhelpers import get_app_path
+from agsspgui.mainwindow import MainWindow
 
 log = setup_logger(__name__)
 main_logger = setup_logger()

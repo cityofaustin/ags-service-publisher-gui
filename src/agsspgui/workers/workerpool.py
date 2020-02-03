@@ -37,10 +37,10 @@ class WorkerPool:
 
     def stop_all_workers(self):
         log.debug('Stopping all workers in worker pool')
-        for worker_id, worker in self.workers.iteritems():
+        for worker_id, worker in self.workers.items():
             self.stop_worker(worker_id)
 
     def remove_all_workers(self):
         log.debug('Removing all workers from worker pool')
-        for worker_id, worker in self.workers.iteritems():
+        for worker_id, worker in self.workers.items():
             self.remove_worker(worker_id)

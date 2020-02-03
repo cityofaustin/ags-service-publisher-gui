@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PublishDialog</class>
- <widget class="QDialog" name="PublishDialog">
+ <class>MXDReportDialog</class>
+ <widget class="QDialog" name="MXDReportDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">Publish Services</string>
+   <string notr="true">MXD Data Sources Report</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
@@ -30,7 +30,7 @@
        <item>
         <widget class="QLabel" name="serviceSelectorLabel">
          <property name="text">
-          <string>Services to publish:</string>
+          <string>Services to report:</string>
          </property>
          <property name="buddy">
           <cstring>serviceSelector</cstring>
@@ -52,17 +52,17 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="instancesTreeLabel">
+        <widget class="QLabel" name="envsTreeLabel">
          <property name="text">
-          <string>Instances to publish to:</string>
+          <string>Environments to report:</string>
          </property>
          <property name="buddy">
-          <cstring>instancesTree</cstring>
+          <cstring>envsTree</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QTreeWidget" name="instancesTree">
+        <widget class="QTreeWidget" name="envsTree">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -110,17 +110,40 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" alignment="Qt::AlignRight">
-    <widget class="QCheckBox" name="createBackupsCheckBox">
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
+   <item row="1" column="0">
+    <widget class="QWidget" name="widget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="text">
-      <string>Create backups</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="outputfileLabel">
+        <property name="text">
+         <string>Output file:</string>
+        </property>
+        <property name="buddy">
+         <cstring>outputfileLineEdit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="outputfileLineEdit">
+        <property name="placeholderText">
+         <string>(Optional) Output filename will be generated automatically if not specified.</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="outputfileButton">
+        <property name="text">
+         <string>...</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -129,7 +152,7 @@
   <customwidget>
    <class>ServiceSelector</class>
    <extends>QWidget</extends>
-   <header>serviceselector.h</header>
+   <header>agsspgui/serviceselector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -138,7 +161,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>PublishDialog</receiver>
+   <receiver>MXDReportDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -154,7 +177,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>PublishDialog</receiver>
+   <receiver>MXDReportDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
