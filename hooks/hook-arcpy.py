@@ -1,6 +1,7 @@
 hiddenimports = [
     'glob',
-    'uuid'
+    'uuid',
+    'imp'
 ]
 
 excludedimports = [

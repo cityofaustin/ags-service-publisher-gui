@@ -14,3 +14,5 @@ except ImportError:
 from types import ModuleType
 sys.path.append('./site-packages')  # Add a dummy site-packages folder to sys.path
 sys.modules['numpy'] = ModuleType('numpy')  # Add a fake numpy module to sys.modules
+if not os.path.exists(os.path.join(sys.prefix, 'conda-meta')):
+    os.mkdir(os.path.join(sys.prefix, 'conda-meta'))
