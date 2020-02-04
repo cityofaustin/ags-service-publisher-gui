@@ -1,2 +1,3 @@
+git+git://github.com/logan-pugh/archook@arcgis-pro#egg=archook
 logutils
 pyinstaller

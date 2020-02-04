@@ -10,11 +10,8 @@ if not hasattr(sys, 'frozen'):
     for name in API_NAMES:
         sip.setapi(name, API_VERSION)
 
-    os.environ['PATH'] = ';'.join((r'C:\Program Files\ArcGIS\Pro\bin', os.environ['PATH']))
-    sys.path.append(r'C:\Program Files\ArcGIS\Pro\bin')
-    sys.path.append(r'C:\Program Files\ArcGIS\Pro\Resources\ArcPy')
-    sys.path.append(r'C:\Program Files\ArcGIS\Pro\Resources\ArcToolbox\Scripts')
-    sys.path.append(r'C:\Program Files\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\Lib\site-packages')
+    import archook
+    archook.get_arcpy(pro=True)
 
 from PyQt4 import QtGui
 from ags_service_publisher.logging_io import setup_logger, setup_console_log_handler
