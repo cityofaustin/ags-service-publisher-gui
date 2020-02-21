@@ -15,7 +15,7 @@ class QtLogHandler(logging.Handler):
     def emit(self, record):
         if record:
             record_text = self.format(record)
-            self.emitter.emit_message(record.levelname, record_text)
+            self.emitter.emit_message(record.levelno, record_text)
 
 
 class QtLogMessageEmitter(QtCore.QObject):
@@ -23,7 +23,7 @@ class QtLogMessageEmitter(QtCore.QObject):
     QObject that emits a Qt signal with the log level and log message for each handled log record.
     """
 
-    messageEmitted = QtCore.pyqtSignal(str, str)
+    messageEmitted = QtCore.pyqtSignal(int, str)
 
     def __init__(self):
         super(QtLogMessageEmitter, self).__init__()

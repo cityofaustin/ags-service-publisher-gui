@@ -1,3 +1,5 @@
+import logging
+
 from PyQt4 import QtGui
 from ags_service_publisher.runner import Runner
 from ags_service_publisher.logging_io import setup_logger
@@ -35,7 +37,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.log_handler = QtLogHandler()
         self.log_handler.messageEmitted.connect(self.log_message)
-        log.addHandler(self.log_handler)
+        logging.root.addHandler(self.log_handler)
 
         self.config_dir = get_config_dir()
         self.log_dir = get_log_dir()
@@ -195,7 +197,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def handle_worker_message(self, worker_id, level, message):
         message = 'Worker {}: {}'.format(worker_id, message)
-        self.log_message(level, message)
+        log.log(level, message)
 
     def handle_worker_result(self, worker_id, exitcode, result):
         log.debug('Worker {} resulted in exitcode {} with result value: {}'.format(worker_id, exitcode, result))
@@ -205,13 +207,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.log_error_message(result)
 
     def log_message(self, level, message):
-        if level == 'INFO':
+        levelname = logging.getLevelName(level)
+        if levelname == 'INFO':
             self.log_info_message(message)
-        elif level == 'DEBUG':
+        elif levelname == 'DEBUG':
             self.log_debug_message(message)
-        elif level == 'WARNING':
+        elif levelname == 'WARNING':
             self.log_warning_message(message)
-        elif level == 'ERROR':
+        elif levelname == 'ERROR':
             self.log_error_message(message)
         else:
             raise RuntimeError('Unknown message level: {}'.format(level))

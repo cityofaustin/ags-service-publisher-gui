@@ -1,5 +1,5 @@
+import logging
 import multiprocessing
-import os
 import sys
 
 if not hasattr(sys, 'frozen'):
@@ -20,12 +20,11 @@ from agsspgui.helpers.pathhelpers import get_app_path
 from agsspgui.mainwindow import MainWindow
 
 log = setup_logger(__name__)
-main_logger = setup_logger()
 
 
 def main():
     multiprocessing.freeze_support()
-    setup_console_log_handler(main_logger, verbose=True)
+    setup_console_log_handler(logging.root, verbose=True)
     log.debug('Application started: {}'.format(get_app_path()))
     app = QtGui.QApplication(sys.argv)
     main_window = MainWindow()

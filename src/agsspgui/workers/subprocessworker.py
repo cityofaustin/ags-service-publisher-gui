@@ -20,7 +20,7 @@ class SubprocessWorker(QtCore.QObject):
 
         - messageEmitted: Emitted whenever the target function's root logger emits a message
             - Worker ID (int)
-            - Log level name (str)
+            - Log level (int)
             - Log message (str)
         - resultEmitted: Emitted when the process ends.
             - Worker ID (int)
@@ -28,7 +28,7 @@ class SubprocessWorker(QtCore.QObject):
             - Return value or exception instance (object)
     """
 
-    messageEmitted = QtCore.pyqtSignal(int, str, str)
+    messageEmitted = QtCore.pyqtSignal(int, int, str)
     resultEmitted = QtCore.pyqtSignal(int, int, object)
 
     def get_next_worker_id(self):
