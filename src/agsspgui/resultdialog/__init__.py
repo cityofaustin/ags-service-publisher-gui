@@ -1,6 +1,6 @@
-from PyQt4 import QtGui
+from PySide2 import QtWidgets
 
 
-class ResultDialog(QtGui.QMessageBox):
+class ResultDialog(QtWidgets.QMessageBox):
     def __init__(self, parent=None):
-        QtGui.QMessageBox.__init__(self, parent)
+        QtWidgets.QMessageBox.__init__(self, parent)

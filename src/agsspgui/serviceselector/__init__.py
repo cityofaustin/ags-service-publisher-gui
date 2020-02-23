@@ -1,4 +1,4 @@
-from PyQt4 import QtGui, QtCore
+from PySide2 import QtWidgets, QtCore, QtGui
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_configs
@@ -9,9 +9,9 @@ from ..helpers.pathhelpers import get_config_dir
 log = setup_logger(__name__)
 
 
-class ServiceSelector(QtGui.QWidget):
+class ServiceSelector(QtWidgets.QWidget):
 
-    selectionChanged = QtCore.pyqtSignal(tuple, tuple)
+    selectionChanged = QtCore.Signal(tuple, tuple)
 
     (
         NAME,
@@ -22,11 +22,11 @@ class ServiceSelector(QtGui.QWidget):
     def __init__(self, parent=None):
         super(ServiceSelector, self).__init__(parent)
 
-        self.layout = QtGui.QVBoxLayout()
+        self.layout = QtWidgets.QVBoxLayout()
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.layout)
 
-        self.tab_widget = QtGui.QTabWidget(self)
+        self.tab_widget = QtWidgets.QTabWidget(self)
         self.layout.addWidget(self.tab_widget)
 
         self.model = ServiceModel(0, 3, self)
@@ -59,7 +59,7 @@ class ServiceSelector(QtGui.QWidget):
         self.add_tab(self.model, 'All')
 
         for category in categories:
-            proxy_model = QtGui.QSortFilterProxyModel(self)
+            proxy_model = QtCore.QSortFilterProxyModel(self)
             proxy_model.setSourceModel(self.model)
             proxy_model.setFilterKeyColumn(self.CATEGORY)
             proxy_model.setFilterRegExp(QtCore.QRegExp(category, QtCore.Qt.CaseSensitive, QtCore.QRegExp.FixedString))
@@ -74,15 +74,15 @@ class ServiceSelector(QtGui.QWidget):
         self.model.checkedItemsChanged.connect(self.selected_items_changed)
 
     def add_tab(self, model, heading):
-        tree_view = QtGui.QTreeView()
-        tree_view.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        tree_view = QtWidgets.QTreeView()
+        tree_view.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         tree_view.setModel(model)
         tree_view.setAlternatingRowColors(True)
-        tree_view.setSelectionMode(QtGui.QAbstractItemView.NoSelection)
-        tree_view.setFrameShape(QtGui.QFrame.NoFrame)
+        tree_view.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        tree_view.setFrameShape(QtWidgets.QFrame.NoFrame)
         tree_view.header().setMinimumSectionSize(100)
         tree_view.header().setStretchLastSection(False)
-        tree_view.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
+        tree_view.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
         self.tab_widget.addTab(tree_view, heading)
 
     def selected_items_changed(self):
@@ -126,8 +126,8 @@ class CheckableItem(QtGui.QStandardItem):
 
 class ServiceModel(QtGui.QStandardItemModel):
 
-    itemChecked = QtCore.pyqtSignal(CheckableItem)
-    checkedItemsChanged = QtCore.pyqtSignal()
+    itemChecked = QtCore.Signal(CheckableItem)
+    checkedItemsChanged = QtCore.Signal()
 
     def __init__(self, *args, **kwargs):
         super(ServiceModel, self).__init__(*args, **kwargs)
@@ -160,7 +160,7 @@ class ServiceModel(QtGui.QStandardItemModel):
         self.checkedItemsChanged.emit()
 
 
-class NoCategoryFilterProxyModel(QtGui.QSortFilterProxyModel):
+class NoCategoryFilterProxyModel(QtCore.QSortFilterProxyModel):
     def __init__(self, *args, **kwargs):
         super(NoCategoryFilterProxyModel, self).__init__(*args, **kwargs)
     

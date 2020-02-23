@@ -12,7 +12,6 @@ pyinstaller ^
     --exclude-module arcpy ^
     --exclude-module numpy ^
     --runtime-hook %~dp0hooks\rthooks\pyi_rth_arcpy.py ^
-    --runtime-hook %~dp0hooks\rthooks\pyi_rth_pyqt4.py ^
     --add-binary %~dp0\..\ags-service-publisher\resources\arcgis\projects\blank\blank.aprx;resources/arcgis/projects/blank ^
     --clean ^
     --noconsole ^

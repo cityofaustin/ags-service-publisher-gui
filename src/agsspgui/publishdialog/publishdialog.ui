@@ -129,7 +129,7 @@
   <customwidget>
    <class>ServiceSelector</class>
    <extends>QWidget</extends>
-   <header>agsspgui/serviceselector.h</header>
+   <header>agsspgui.serviceselector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -1,5 +1,5 @@
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import Qt
+from PySide2 import QtWidgets, QtCore
+from PySide2.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config
@@ -11,26 +11,26 @@ from ..helpers.pathhelpers import get_config_dir
 log = setup_logger(__name__)
 
 
-class MXDReportDialog(QtGui.QDialog, Ui_MXDReportDialog):
+class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
 
-    runReport = QtCore.pyqtSignal(tuple, tuple, tuple, str)
+    runReport = QtCore.Signal(tuple, tuple, tuple, str)
 
     def __init__(self, parent=None):
-        QtGui.QDialog.__init__(self, parent)
+        QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
-        self._acceptButton = self.buttonBox.button(QtGui.QDialogButtonBox.Ok)
+        self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
         self._acceptButton.setText('Run report')
 
-        self.envsTree.header().setResizeMode(0, QtGui.QHeaderView.Stretch)
+        self.envsTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
 
         self.selected_configs = ()
         self.selected_services = ()
 
         user_config = get_config('userconfig', config_dir=get_config_dir())
         for env_name, env in user_config['environments'].items():
-            env_item = QtGui.QTreeWidgetItem(self.envsTree)
+            env_item = QtWidgets.QTreeWidgetItem(self.envsTree)
             env_item.setText(0, env_name)
             env_item.setText(1, 'Environment')
             env_item.setCheckState(0, Qt.Unchecked)
@@ -71,7 +71,7 @@ class MXDReportDialog(QtGui.QDialog, Ui_MXDReportDialog):
         self.runReport.emit(included_configs, included_services, included_envs, self.outputfileLineEdit.text() or None)
 
     def select_output_filename(self):
-        filename = QtGui.QFileDialog.getSaveFileName(
+        filename, _filter = QtWidgets.QFileDialog.getSaveFileName(
             self,
             'Output filename',
             self.outputfileLineEdit.text(),
