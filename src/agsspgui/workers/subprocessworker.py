@@ -113,7 +113,7 @@ class SubprocessWorker(QtCore.QObject):
 
         self.log_queue_listener.stop()
 
-    @QtCore.Slot(str, str)
+    @QtCore.Slot(int, str)
     def handle_message(self, level, message):
         self.messageEmitted.emit(self.id, level, message)
 
