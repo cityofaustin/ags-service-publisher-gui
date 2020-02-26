@@ -129,7 +129,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 result_dialog.setText(str(result))
             except Exception as e:
                 result_dialog.setWindowTitle('Error - AGS Service Publisher')
-                result_dialog.setIcon(QtGui.QMessageBox.Critical)
+                result_dialog.setIcon(QtWidgets.QMessageBox.Critical)
                 result_dialog.setText(str(e))
             finally:
                 result_dialog.exec_()
