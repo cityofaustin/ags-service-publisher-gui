@@ -6,7 +6,7 @@ if not hasattr(sys, 'frozen'):
     import archook
     archook.get_arcpy(pro=True)
 
-from PySide2 import QtWidgets
+from PyQt5 import QtWidgets
 from ags_service_publisher.logging_io import setup_logger, setup_console_log_handler
 
 from agsspgui.helpers.pathhelpers import get_app_path

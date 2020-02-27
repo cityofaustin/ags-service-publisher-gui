@@ -1,5 +1,5 @@
-from PySide2 import QtWidgets, QtCore
-from PySide2.QtCore import Qt
+from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config
@@ -14,7 +14,7 @@ log = setup_logger(__name__)
 
 class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog):
 
-    runReport = QtCore.Signal(tuple, tuple, tuple, str)
+    runReport = QtCore.pyqtSignal(tuple, tuple, tuple, str)
 
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent)

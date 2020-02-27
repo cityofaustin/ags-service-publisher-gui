@@ -1,5 +1,5 @@
 import logging
-from PySide2 import QtCore
+from PyQt5 import QtCore
 
 
 class QtLogHandler(logging.Handler):
@@ -23,7 +23,7 @@ class QtLogMessageEmitter(QtCore.QObject):
     QObject that emits a Qt signal with the log level and log message for each handled log record.
     """
 
-    messageEmitted = QtCore.Signal(int, str)
+    messageEmitted = QtCore.pyqtSignal(int, str)
 
     def __init__(self):
         super(QtLogMessageEmitter, self).__init__()

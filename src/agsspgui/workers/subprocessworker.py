@@ -3,7 +3,7 @@ import multiprocessing
 import sys
 import traceback
 
-from PySide2 import QtCore
+from PyQt5 import QtCore
 from ags_service_publisher.logging_io import setup_logger
 from logutils.queue import QueueHandler, QueueListener
 
@@ -28,8 +28,8 @@ class SubprocessWorker(QtCore.QObject):
             - Return value or exception instance (object)
     """
 
-    messageEmitted = QtCore.Signal(int, int, str)
-    resultEmitted = QtCore.Signal(int, int, object)
+    messageEmitted = QtCore.pyqtSignal(int, int, str)
+    resultEmitted = QtCore.pyqtSignal(int, int, object)
 
     def get_next_worker_id(self):
         return next(itertools.count())
@@ -74,7 +74,7 @@ class SubprocessWorker(QtCore.QObject):
             message = 'Subprocess {} (pid {}) is still active'.format(self.process.name, self.process.pid)
             log.debug(message)
 
-    @QtCore.Slot()
+    @QtCore.pyqtSlot()
     def start(self):
         if self.running:
             log.warn('Worker {} already started on thread {}'.format(self.id, str(self.thread)))
@@ -97,7 +97,7 @@ class SubprocessWorker(QtCore.QObject):
         self.timer.start(self.timer_check_interval)
         log.debug('Subprocess {} (pid {}) started'.format(self.process.name, self.process.pid))
 
-    @QtCore.Slot()
+    @QtCore.pyqtSlot()
     def stop(self):
         if not self.running:
             log.warn('Worker {} already stopped on thread {}'.format(self.id, str(self.thread)))
@@ -113,7 +113,7 @@ class SubprocessWorker(QtCore.QObject):
 
         self.log_queue_listener.stop()
 
-    @QtCore.Slot(int, str)
+    @QtCore.pyqtSlot(int, str)
     def handle_message(self, level, message):
         self.messageEmitted.emit(self.id, level, message)
 

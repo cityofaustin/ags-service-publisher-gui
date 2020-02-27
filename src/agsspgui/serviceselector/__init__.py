@@ -1,4 +1,4 @@
-from PySide2 import QtWidgets, QtCore, QtGui
+from PyQt5 import QtWidgets, QtCore, QtGui
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_configs
@@ -11,7 +11,7 @@ log = setup_logger(__name__)
 
 class ServiceSelector(QtWidgets.QWidget):
 
-    selectionChanged = QtCore.Signal(tuple, tuple)
+    selectionChanged = QtCore.pyqtSignal(tuple, tuple)
 
     (
         NAME,
@@ -126,8 +126,8 @@ class CheckableItem(QtGui.QStandardItem):
 
 class ServiceModel(QtGui.QStandardItemModel):
 
-    itemChecked = QtCore.Signal(CheckableItem)
-    checkedItemsChanged = QtCore.Signal()
+    itemChecked = QtCore.pyqtSignal(CheckableItem)
+    checkedItemsChanged = QtCore.pyqtSignal()
 
     def __init__(self, *args, **kwargs):
         super(ServiceModel, self).__init__(*args, **kwargs)

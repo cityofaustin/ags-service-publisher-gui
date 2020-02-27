@@ -1,6 +1,6 @@
 import logging
 
-from PySide2 import QtWidgets
+from PyQt5 import QtWidgets
 from ags_service_publisher.runner import Runner
 from ags_service_publisher.logging_io import setup_logger
 
@@ -168,7 +168,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             publish_dialog.exec_()
         except Exception:
             log.exception('An error occurred while showing the Publish dialog')
-            raise
 
     def show_mxd_report_dialog(self):
         try:
@@ -177,7 +176,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             mxd_report_dialog.exec_()
         except Exception:
             log.exception('An error occurred while showing the MXD Report dialog')
-            raise
 
     def show_dataset_usages_report_dialog(self):
         try:
@@ -186,7 +184,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             dataset_usages_report_dialog.exec_()
         except Exception:
             log.exception('An error occurred while showing the Dataset Usages Report dialog')
-            raise
 
     def test_log_window(self):
         self.log_info_message('info')
