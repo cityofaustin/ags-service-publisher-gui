@@ -85,6 +85,7 @@
     </property>
     <addaction name="actionMXD_Data_Sources_Report"/>
     <addaction name="actionDataset_Usages_Report"/>
+    <addaction name="actionData_Stores_Report"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -146,6 +147,11 @@
   <action name="actionDataset_Usages_Report">
    <property name="text">
     <string>Dataset Usages Report</string>
+   </property>
+  </action>
+  <action name="actionData_Stores_Report">
+   <property name="text">
+    <string>Data Stores Report</string>
    </property>
   </action>
  </widget>
