@@ -11,6 +11,7 @@ from mainwindow_ui import Ui_MainWindow
 from publishdialog import PublishDialog
 from mxdreportdialog import MXDReportDialog
 from datasetusagesreportdialog import DatasetUsagesReportDialog
+from datastoresreportdialog import DataStoresReportDialog
 from resultdialog import ResultDialog
 from workers.subprocessworker import SubprocessWorker
 from workers.workerpool import WorkerPool
@@ -25,6 +26,7 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionPublish_Services.triggered.connect(self.show_publish_dialog)
         self.actionMXD_Data_Sources_Report.triggered.connect(self.show_mxd_report_dialog)
         self.actionDataset_Usages_Report.triggered.connect(self.show_dataset_usages_report_dialog)
+        self.actionData_Stores_Report.triggered.connect(self.show_data_stores_report_dialog)
         self.actionGetInstallInfo.triggered.connect(self.get_install_info)
         self.actionGetExecutablePath.triggered.connect(self.get_executable_path)
         self.actionAbout.triggered.connect(self.about)
@@ -112,6 +114,22 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.worker_pool.add_worker(worker)
         self.worker_pool.start_worker(worker.id)
 
+    def data_stores_report(self, included_envs, included_instances, output_filename):
+        runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
+        worker = SubprocessWorker(
+            target=runner.run_data_stores_report,
+            kwargs={
+                'included_envs': included_envs,
+                'included_instances': included_instances,
+                'output_filename': output_filename
+            }
+        )
+
+        worker.messageEmitted.connect(self.handle_worker_message)
+        worker.resultEmitted.connect(self.handle_worker_result)
+        self.worker_pool.add_worker(worker)
+        self.worker_pool.start_worker(worker.id)
+
     def get_install_info(self):
         result_dialog = ResultDialog(self)
 
@@ -170,6 +188,14 @@ class MainWindow(QtGui.QMainWindow, Ui_MainWindow):
         except Exception:
             log.exception('An error occurred while showing the Dataset Usages Report dialog')
             raise
+
+    def show_data_stores_report_dialog(self):
+        try:
+            data_stores_report_dialog = DataStoresReportDialog(self)
+            data_stores_report_dialog.runReport.connect(self.data_stores_report)
+            data_stores_report_dialog.exec_()
+        except Exception:
+            log.exception('An error occurred while showing the Data Stores Report dialog')
 
     def test_log_window(self):
         self.log_info_message('info')
