@@ -17,7 +17,8 @@ log = setup_logger(__name__)
 
 def main():
     multiprocessing.freeze_support()
-    setup_console_log_handler(logging.root, verbose=True)
+    if not hasattr(sys, 'frozen'):
+        setup_console_log_handler(logging.root, verbose=True)
     log.debug('Application started: {}'.format(get_app_path()))
     app = QtWidgets.QApplication(sys.argv)
     main_window = MainWindow()
