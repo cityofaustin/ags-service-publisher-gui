@@ -1,3 +1,3 @@
-from PyInstaller.utils.hooks import copy_metadata
+from PyInstaller.utils.hooks import collect_data_files
 
-datas = copy_metadata('archook')
+datas = collect_data_files('archook')

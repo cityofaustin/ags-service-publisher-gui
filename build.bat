@@ -6,6 +6,7 @@ call "%~dp0buildtemplates.bat"
 
 pyinstaller ^
     --onefile ^
+    --hidden-import archook ^
     --hidden-import glob ^
     --hidden-import imp ^
     --hidden-import uuid ^
@@ -14,7 +15,7 @@ pyinstaller ^
     --upx-exclude msvcp140.dll ^
     --upx-exclude msvcp140_1.dll ^
     --upx-exclude msvcp140_2.dll ^
-    --upx-exclude python36.dll ^
+    --upx-exclude python3.dll ^
     --upx-exclude qwindows.dll ^
     --upx-exclude qwindowsvistastyle.dll ^
     --upx-exclude ucrtbase.dll ^
@@ -28,5 +29,5 @@ pyinstaller ^
     --distpath %~dp0dist ^
     --workpath %~dp0build ^
     --specpath %~dp0 ^
-    -n ags_service_publisher_gui ^
+    -n ags_service_publisher_gui_pro ^
     %~dp0src\main.pyw

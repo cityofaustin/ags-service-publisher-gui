@@ -14,13 +14,13 @@ It currently enables users to publish services to ArcGIS Server and run a number
 
 ## Requirements
 
-- Windows 7+
-- ArcGIS Desktop 10.3+
-- Python 2.7+
+- Windows 10 64-bit
+- ArcGIS Pro 2.7.x
+- Python 3.7.x
 
 ## Installation
 
-1. Download the `ags_service_publisher_gui.exe` executable from the [Releases](https://github.com/cityofaustin/ags-service-publisher-gui/releases) tab to a directory of your choice
+1. Download the `ags_service_publisher_gui_pro.exe` executable from the [Releases](https://github.com/cityofaustin/ags-service-publisher-gui/releases) tab to a directory of your choice
 2. Configure the application as described in the [Configuration section](https://github.com/cityofaustin/ags-service-publisher#configuration) of the `ags-service-publisher` README.
 
 ## Tips
@@ -32,16 +32,19 @@ It currently enables users to publish services to ArcGIS Server and run a number
     - `AGS_SERVICE_PUBLISHER_LOG_DIR`: Allows you to override which directory is used for storing log files. Defaults to the `logs`
         directory beneath the executable's directory.
     - `AGS_SERVICE_PUBLISHER_REPORT_DIR`: Allows you to override which directory is used for writing reports. Default to the `reports` directory beneath the executable's directory.
-- By default, backups are created when publishing MapServer and GeocodeServer services. A `Backups` subdirectory is created in the same directory as the source file(s), and a copy of the services to be published are placed there with a timestamp appended. To disable creating backups, uncheck the "Create backups" checkbox on the Publish Services dialog.
+- By default, backups are created when publishing MapServer, ImageServer and GeocodeServer services. A `Backups` subdirectory is created in the same directory as the source file(s), and a copy of the existing source files corresponding to the services to be published are placed there with a timestamp appended. To disable creating backups, uncheck the "Create backups" checkbox on the Publish Services dialog.
 
 ## Building
 
-1. Download PyQt4 (`PyQt4‑4.11.4‑cp27‑cp27m‑win32.whl`) from this page: https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyqt4
-2. Use pip to install the downloaded wheel, e.g. `pip install PyQt4‑4.11.4‑cp27‑cp27m‑win32.whl`
-3. Add the PyQt4 directory, e.g. `<Python interpreter directory>\Lib\site-packages\PyQt4`, to your `PATH` environment variable, so that `pyuic4.bat` is available.
-4. Install the [`ags-service-publisher`](https://github.com/cityofaustin/ags-service-publisher) library per its [instructions](https://github.com/cityofaustin/ags-service-publisher#installation)
-5. Use pip to install the other development dependencies, e.g. `pip install -R requirements.txt`
-6. Run the `build.bat` script. If successful, this will output an executable to the `dist` subdirectory.
+1. (Optional) Create and activate a [virtual environment](https://docs.python.org/3/library/venv.html) using the Python executable installed in the default ArcGIS Pro `conda` environment, e.g.:
+
+    ```
+    %PROGRAMFILES%\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python.exe -m venv <venv name>
+    <venv name>\Scripts\activate.bat
+    ```
+1. Install the [`ags-service-publisher`](https://github.com/cityofaustin/ags-service-publisher) library per its [instructions](https://github.com/cityofaustin/ags-service-publisher#installation)
+2. Use pip to install the other development dependencies, e.g. `pip install -r requirements.txt`
+3. Run the `build.bat` script. If successful, this will output an executable to the `dist` subdirectory.
 
 ## TODO
 
@@ -53,7 +56,7 @@ It currently enables users to publish services to ArcGIS Server and run a number
 - Add a config file editor/generator
 - Create interface for generating AGS tokens
 - Create interface for batch importing SDE connection files
-- Add ArcGIS Pro support
+- ~~Add ArcGIS Pro support~~ Implemented in [`ags-service-publisher/#3`](https://github.com/cityofaustin/ags-service-publisher/pull/3)
 - Probably lots of other stuff!
 
 ## License
