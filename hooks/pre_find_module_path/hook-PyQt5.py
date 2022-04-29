@@ -15,17 +15,17 @@ def pre_find_module_path(api):
     qt.get_qt_binaries = get_qt_binaries
 
     logger.info('Excluding unused Qt dependencies')
-    keys_to_delete = [key for key in qt._qt_dynamic_dependencies_dict.keys() if key not in (
+    keys_to_delete = [key for key in qt._qt5_dynamic_dependencies_dict.keys() if key not in (
         'qt5core',
         'qt5gui',
         'qt5widgets',
     )]
     for key in keys_to_delete:
-        del qt._qt_dynamic_dependencies_dict[key]
+        del qt._qt5_dynamic_dependencies_dict[key]
 
     logger.info('Excluding unused Qt translations')
-    for key, value in qt._qt_dynamic_dependencies_dict.items():
-        qt._qt_dynamic_dependencies_dict[key] = tuple((
+    for key, value in qt._qt5_dynamic_dependencies_dict.items():
+        qt._qt5_dynamic_dependencies_dict[key] = tuple((
             element if index != 1 else None for index, element in enumerate(value)
         ))
 

@@ -11,6 +11,7 @@ from ..helpers.texthelpers import escape_html
 from ..loghandlers.qtloghandler import QtLogHandler
 from .mainwindow_ui import Ui_MainWindow
 from ..publishdialog import PublishDialog
+from ..aprxconverterdialog import APRXConverterDialog
 from ..mxdreportdialog import MXDReportDialog
 from ..datasetusagesreportdialog import DatasetUsagesReportDialog
 from ..datastoresreportdialog import DataStoresReportDialog
@@ -26,6 +27,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
         self.actionPublish_Services.triggered.connect(self.show_publish_dialog)
+        self.actionAPRX_Converter.triggered.connect(self.show_aprx_converter_dialog)
         self.actionMXD_Data_Sources_Report.triggered.connect(self.show_mxd_report_dialog)
         self.actionDataset_Usages_Report.triggered.connect(self.show_dataset_usages_report_dialog)
         self.actionData_Stores_Report.triggered.connect(self.show_data_stores_report_dialog)
@@ -73,6 +75,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 'included_envs': included_envs,
                 'included_instances': included_instances,
                 'create_backups': create_backups
+            }
+        )
+
+        worker.messageEmitted.connect(self.handle_worker_message)
+        worker.resultEmitted.connect(self.handle_worker_result)
+        self.worker_pool.add_worker(worker)
+        self.worker_pool.start_worker(worker.id)
+
+    def run_aprx_converter(self, included_configs, included_services, included_envs):
+        runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
+        worker = SubprocessWorker(
+            target=runner.batch_convert_mxd_to_aprx,
+            kwargs={
+                'included_configs': included_configs,
+                'included_services': included_services,
+                'included_envs': included_envs,
+                'warn_on_validation_errors': True
             }
         )
 
@@ -153,7 +172,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 result_dialog.exec_()
 
         worker = SubprocessWorker(
-            target=get_install_info
+            target=get_install_info,
         )
         worker.messageEmitted.connect(self.handle_worker_message)
         worker.resultEmitted.connect(self.handle_worker_result)
@@ -186,6 +205,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             publish_dialog.exec_()
         except Exception:
             log.exception('An error occurred while showing the Publish dialog')
+
+    def show_aprx_converter_dialog(self):
+        try:
+            mxd_report_dialog = APRXConverterDialog(self)
+            mxd_report_dialog.runConverter.connect(self.run_aprx_converter)
+            mxd_report_dialog.exec_()
+        except Exception:
+            log.exception('An error occurred while showing the MXD Report dialog')
 
     def show_mxd_report_dialog(self):
         try:

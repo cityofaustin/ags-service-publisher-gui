@@ -2,10 +2,12 @@ import itertools
 import multiprocessing
 import sys
 import traceback
+from datetime import timedelta
+from logging.handlers import QueueHandler, QueueListener
+
 
 from PyQt5 import QtCore
 from ags_service_publisher.logging_io import setup_logger
-from logutils.queue import QueueHandler, QueueListener
 
 from ..loghandlers.qtloghandler import QtLogHandler
 
@@ -39,7 +41,8 @@ class SubprocessWorker(QtCore.QObject):
         self.id = self.get_next_worker_id()
         self.running = False
         self.timer = None
-        self.timer_check_interval=timer_check_interval
+        self.timer_check_interval = timer_check_interval
+        self.elapsed_timer = None
         self.process = None
         self.log_handler = log_handler if log_handler is not None else QtLogHandler()
         self.log_handler.messageEmitted.connect(self.handle_message)
@@ -65,13 +68,13 @@ class SubprocessWorker(QtCore.QObject):
             raise RuntimeError(message)
         log.debug('Checking status of subprocess {} (pid {})'.format(self.process.name, self.process.pid))
         if not self.process.is_alive():
-            message = 'Subprocess {} ended (pid {}, exit code {})'.format(
-                self.process.name, self.process.pid, self.process.exitcode
+            message = 'Subprocess {} ended (pid {}, exit code {}, elapsed time {})'.format(
+                self.process.name, self.process.pid, self.process.exitcode, timedelta(milliseconds=self.elapsed_timer.elapsed())
             )
             log.debug(message)
             self.resultEmitted.emit(self.id, self.process.exitcode, self.result_queue.get())
         else:
-            message = 'Subprocess {} (pid {}) is still active'.format(self.process.name, self.process.pid)
+            message = 'Subprocess {} (pid {}) is still active (elapsed time {})'.format(self.process.name, self.process.pid, timedelta(milliseconds=self.elapsed_timer.elapsed()))
             log.debug(message)
 
     @QtCore.pyqtSlot()
@@ -84,6 +87,7 @@ class SubprocessWorker(QtCore.QObject):
 
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.check_process_status)
+        self.elapsed_timer = QtCore.QElapsedTimer()
 
         self.log_queue_listener.start()
 
@@ -95,6 +99,7 @@ class SubprocessWorker(QtCore.QObject):
 
         self.process.start()
         self.timer.start(self.timer_check_interval)
+        self.elapsed_timer.start()
         log.debug('Subprocess {} (pid {}) started'.format(self.process.name, self.process.pid))
 
     @QtCore.pyqtSlot()
@@ -109,7 +114,7 @@ class SubprocessWorker(QtCore.QObject):
             log.debug('Terminating subprocess {} (pid {})'.format(self.process.name, self.process.pid))
             self.process.terminate()
             self.process.join()
-        log.debug('Worker {} stopped on thread {}'.format(self.id, str(self.thread)))
+        log.debug('Worker {} stopped on thread {} (elapsed time {})'.format(self.id, str(self.thread), timedelta(milliseconds=self.elapsed_timer.elapsed())))
 
         self.log_queue_listener.stop()
 
@@ -120,7 +125,8 @@ class SubprocessWorker(QtCore.QObject):
 
 def wrap_target_function(target, log_queue, result_queue, *args, **kwargs):
     try:
-        setup_logger(handler=QueueHandler(log_queue))
+        setup_logger(namespace=None, handler=QueueHandler(log_queue))
+        log.debug(f'Wrapping target function: {target.__module__}.{target.__qualname__}')
         result = target(*args, **kwargs)
         result_queue.put(result)
     except:

@@ -1,4 +1,3 @@
 git+https://github.com/JamesRamm/archook#egg=archook
-logutils
 pyinstaller
 PyQt5

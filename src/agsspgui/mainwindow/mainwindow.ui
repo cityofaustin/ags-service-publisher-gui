@@ -102,6 +102,7 @@
      <string>Publishing</string>
     </property>
     <addaction name="actionPublish_Services"/>
+    <addaction name="actionAPRX_Converter"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuPublishing"/>
@@ -132,6 +133,11 @@
   <action name="actionPublish_Services">
    <property name="text">
     <string>Publish Services</string>
+   </property>
+  </action>
+<action name="actionAPRX_Converter">
+   <property name="text">
+    <string>APRX Converter</string>
    </property>
   </action>
   <action name="actionAbout">
