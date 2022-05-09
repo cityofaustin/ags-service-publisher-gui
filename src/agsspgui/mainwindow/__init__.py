@@ -65,7 +65,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             log.debug('Ignoring closeEvent')
             event.ignore()
 
-    def publish_services(self, included_configs, included_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services):
+    def publish_services(self, included_configs, included_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services, publish_services):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir)
         worker = SubprocessWorker(
             target=runner.run_batch_publishing_job,
@@ -77,6 +77,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 'create_backups': create_backups,
                 'copy_source_files_from_staging_folder': copy_source_files_from_staging_folder,
                 'delete_existing_services': delete_existing_services,
+                'publish_services': publish_services,
             }
         )
 

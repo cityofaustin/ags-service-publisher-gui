@@ -13,7 +13,7 @@ log = setup_logger(__name__)
 
 class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
 
-    publishSelected = QtCore.pyqtSignal(tuple, tuple, tuple, tuple, bool, bool, bool)
+    publishSelected = QtCore.pyqtSignal(tuple, tuple, tuple, tuple, bool, bool, bool, bool)
 
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent)
@@ -52,7 +52,7 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
 
     def update_publish_button_state(self):
         log.debug('Updating publish button state')
-        included_configs, included_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services = self.get_selected_items()
+        included_configs, included_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services, publish_services = self.get_selected_items()
         self._acceptButton.setEnabled(
             (len(included_configs) > 0 and len(included_instances) > 0)
         )
@@ -77,10 +77,11 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
         create_backups = self.createBackupsCheckBox.isChecked()
         copy_source_files_from_staging_folder = self.copyStagingFilesCheckBox.isChecked()
         delete_existing_services = self.deleteExistingServicesCheckBox.isChecked()
-        return self.selected_configs, self.selected_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services
+        publish_services = self.publishServicesCheckBox.isChecked()
+        return self.selected_configs, self.selected_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services, publish_services
 
     def publish_selected_items(self):
-        included_configs, included_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services = self.get_selected_items()
+        included_configs, included_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services, publish_services = self.get_selected_items()
         self.publishSelected.emit(
             tuple(included_configs),
             tuple(included_services),
@@ -89,4 +90,5 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
             create_backups,
             copy_source_files_from_staging_folder,
             delete_existing_services,
+            publish_services,
         )
