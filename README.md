@@ -15,7 +15,7 @@ It currently enables users to publish services to ArcGIS Server and run a number
 ## Requirements
 
 - Windows 10 64-bit
-- ArcGIS Pro 2.7.x
+- ArcGIS Pro 2.9.x
 - Python 3.7.x
 
 ## Installation
