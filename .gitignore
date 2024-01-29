@@ -3,6 +3,10 @@
 build
 dist
 *.spec
+.eggs
+*.egg-info
+.vscode
+*.env
 /pyqtdeploy
 .venv*
 *_ui.py
