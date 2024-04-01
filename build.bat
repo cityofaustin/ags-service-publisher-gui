@@ -13,7 +13,7 @@ pyinstaller ^
     --exclude-module numpy ^
     --additional-hooks-dir=%~dp0hooks ^
     --runtime-hook %~dp0hooks\rthooks\pyi_rth_arcpy.py ^
-    --add-binary %~dp0\..\ags-service-publisher\ags_service_publisher\resources\arcgis\projects\blank\blank.aprx;resources/arcgis/projects/blank ^
+    --add-binary %~dp0\..\ags-service-publisher\ags_service_publisher\resources\arcgis\projects\blank\blank.aprx;ags_service_publisher/resources/arcgis/projects/blank ^
     --noupx ^
     --clean ^
     --noconsole ^
