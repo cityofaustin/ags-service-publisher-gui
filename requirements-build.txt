@@ -1,0 +1,4 @@
+archook@git+https://github.com/logan-pugh/archook@python-3-11
+pyinstaller
+PyQt5
+qt5-applications

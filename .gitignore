@@ -2,7 +2,6 @@
 *.pyc
 build
 dist
-*.spec
 .eggs
 *.egg-info
 .vscode

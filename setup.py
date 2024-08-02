@@ -5,7 +5,7 @@ setup(
         "setuptools_scm",
     ],
     install_requires=[
-        'archook',
+        'ags_service_publisher',
         'PyQt5',
     ],
     use_scm_version=True,

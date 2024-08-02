@@ -1,4 +1,0 @@
-git+https://github.com/JamesRamm/archook#egg=archook
-pyinstaller
-PyQt5
-qt5-applications
