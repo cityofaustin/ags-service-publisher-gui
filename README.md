@@ -1,7 +1,5 @@
 # ArcGIS Server Service Publisher GUI
 
-**Note: This is a work in progress!**
-
 ## Overview
 
 This is the graphical user interface (GUI) application for the [ArcGIS Server Service Publisher](https://github.com/cityofaustin/ags-service-publisher) Python library.
@@ -14,9 +12,9 @@ It currently enables users to publish services to ArcGIS Server and run a number
 
 ## Requirements
 
-- Windows 10 64-bit
-- ArcGIS Pro 2.9.x
-- Python 3.7.x
+- Windows 10+ 64-bit
+- ArcGIS Pro 3.3.x
+- Python 3.11.x
 
 ## Installation
 
@@ -43,7 +41,7 @@ It currently enables users to publish services to ArcGIS Server and run a number
     <venv name>\Scripts\activate.bat
     ```
 1. Install the [`ags-service-publisher`](https://github.com/cityofaustin/ags-service-publisher) library per its [instructions](https://github.com/cityofaustin/ags-service-publisher#installation)
-2. Use pip to install the other development dependencies, e.g. `pip install -r requirements.txt`
+2. Use pip to install the other development dependencies, e.g. `pip install -r requirements-build.txt`
 3. Run the `build.bat` script. If successful, this will output an executable to the `dist` subdirectory.
 
 ## TODO
@@ -65,4 +63,4 @@ As a work of the City of Austin, this project is in the public domain within the
 
 Additionally, we waive copyright and related rights in the work worldwide through the [CC0 1.0 Universal public domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
 
-[1]: https://docs.python.org/2/library/fnmatch.html
+[1]: https://docs.python.org/3/library/fnmatch.html
