@@ -40,9 +40,12 @@ It currently enables users to publish services to ArcGIS Server and run a number
     %PROGRAMFILES%\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python.exe -m venv <venv name>
     <venv name>\Scripts\activate.bat
     ```
-1. Install the [`ags-service-publisher`](https://github.com/cityofaustin/ags-service-publisher) library per its [instructions](https://github.com/cityofaustin/ags-service-publisher#installation)
-2. Use pip to install the other development dependencies, e.g. `pip install -r requirements-build.txt`
-3. Run the `build.bat` script. If successful, this will output an executable to the `dist` subdirectory.
+2. Use pip to install the `ags-service-publisher-gui`, [`ags-service-publisher`](https://github.com/cityofaustin/ags-service-publisher) and other development dependencies, e.g.:
+
+   ```
+   pip install . ags-service-publisher@git+https://github.com/cityofaustin/ags-service-publisher -r requirements-build.txt
+   ```
+4. Run the `build.bat` script. If successful, this will output an executable to the `dist` subdirectory.
 
 ## TODO
 
