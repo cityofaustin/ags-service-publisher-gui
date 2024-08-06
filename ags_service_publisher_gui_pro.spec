@@ -1,16 +1,15 @@
 # -*- mode: python ; coding: utf-8 -*-
 import fnmatch
 import os
-from PyInstaller.utils.hooks import collect_data_files
+from PyInstaller.utils.hooks import collect_data_files, get_package_paths
 
 datas = []
 datas += collect_data_files('archook')
 
-
 a = Analysis(
     ['src\\main.pyw'],
     pathex=[],
-    binaries=[('../ags-service-publisher/ags_service_publisher/resources/arcgis/projects/blank/blank.aprx', 'ags_service_publisher/resources/arcgis/projects/blank')],
+    binaries=[(os.path.join(get_package_paths('ags_service_publisher')[1], r'resources\arcgis\projects\blank\blank.aprx'), 'ags_service_publisher/resources/arcgis/projects/blank')],
     datas=datas,
     hiddenimports=[
         'archook',
