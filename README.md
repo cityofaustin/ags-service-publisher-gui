@@ -34,13 +34,25 @@ It currently enables users to publish services to ArcGIS Server and run a number
 
 ## Building
 
-1. (Optional) Create and activate a [virtual environment](https://docs.python.org/3/library/venv.html) using the Python executable installed in the default ArcGIS Pro `conda` environment, e.g.:
+ArcGIS Pro uses the concept of [conda][2] environments to manage and isolate Python packages. The default conda environment included with ArcGIS Pro is read-only, so we will create a new environment by cloning the default one.
 
-    ```
-    %PROGRAMFILES%\ArcGIS\Pro\bin\Python\envs\arcgispro-py3\python.exe -m venv <venv name>
-    <venv name>\Scripts\activate.bat
-    ```
-2. Use pip to install the `ags-service-publisher-gui`, [`ags-service-publisher`](https://github.com/cityofaustin/ags-service-publisher) and other development dependencies, e.g.:
+1. Clone this repository to a local directory.
+
+2. From the start menu, run the ArcGIS->Python Command Prompt shortcut.
+
+3. Create a clone of the ArcGIS Pro default conda environment (change `<path_to_local_directory>` to the local directory you cloned this repository into):
+
+    `conda create --clone arcgispro-py3 --prefix <path_to_local_directory>\arcgispro-py3-clone --no-shortcuts --pinned`
+
+4. Activate the cloned environment:
+
+    `activate <path_to_local_directory>\arcgispro-py3-clone`
+
+5. Change directories to the local directory:
+
+    `cd <path_to_local_directory>`
+
+6. Use pip to install `ags-service-publisher-gui`, [`ags-service-publisher`](https://github.com/cityofaustin/ags-service-publisher) and other development dependencies, e.g.:
 
    ```
    pip install . ags-service-publisher@git+https://github.com/cityofaustin/ags-service-publisher -r requirements-build.txt
@@ -67,3 +79,4 @@ As a work of the City of Austin, this project is in the public domain within the
 Additionally, we waive copyright and related rights in the work worldwide through the [CC0 1.0 Universal public domain dedication](https://creativecommons.org/publicdomain/zero/1.0/).
 
 [1]: https://docs.python.org/3/library/fnmatch.html
+[2]: https://pro.arcgis.com/en/pro-app/latest/arcpy/get-started/what-is-conda.htm
