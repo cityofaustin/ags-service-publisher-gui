@@ -57,7 +57,16 @@ ArcGIS Pro uses the concept of [conda][2] environments to manage and isolate Pyt
    ```
    pip install . ags-service-publisher@git+https://github.com/cityofaustin/ags-service-publisher -r requirements-build.txt
    ```
-4. Run the `build.bat` script. If successful, this will output an executable to the `dist` subdirectory.
+7. Run the `buildtemplates.bat` script to generate the UI Python modules (`*_ui.py`). This only needs to be done once unless you modify the UI template files (`*.ui`).
+8. Run the `build.bat` script. If successful, this will output an executable to the `dist` subdirectory.
+9. (Optional) You can [digitally sign](https://learn.microsoft.com/en-us/windows/win32/seccrypto/cryptography-tools) the built executable by running the `codesigning.bat` script.
+
+    You will need to install [`SignTool`](https://learn.microsoft.com/en-us/windows/win32/seccrypto/signtool) from the [Windows SDK](https://developer.microsoft.com/windows/downloads/windows-sdk) and add its directory to the `PATH` environment variable.
+
+    You must also have a valid code signing certificate in your Windows certificate store and set the following environment variables:
+
+    - `AGSSPGUICERTSHA1`: SHA-1 hash of the code signing certificate
+    - `AGSSPGUITIMESTAMPURL`: URL to a trusted time stamping server such as `http://timestamp.digicert.com`
 
 ## TODO
 
