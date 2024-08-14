@@ -1,5 +1,5 @@
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt
+from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config
@@ -20,23 +20,23 @@ class DataStoresReportDialog(QtWidgets.QDialog, Ui_DataStoresReportDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
-        self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint | Qt.WindowType.WindowMinimizeButtonHint)
+        self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self._acceptButton.setText('Run report')
 
-        self.instancesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        self.instancesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.Stretch)
 
         user_config = get_config('userconfig', config_dir=get_config_dir())
         for env_name, env in user_config['environments'].items():
             env_item = QtWidgets.QTreeWidgetItem(self.instancesTree)
             env_item.setText(0, env_name)
             env_item.setText(1, 'Environment')
-            env_item.setFlags(env_item.flags() | Qt.ItemIsTristate)
+            env_item.setFlags(env_item.flags() | Qt.ItemFlag.ItemIsAutoTristate)
             for instance_name in env.get('ags_instances'):
                 instance_item = QtWidgets.QTreeWidgetItem(env_item)
                 instance_item.setText(0, instance_name)
                 instance_item.setText(1, 'AGS Instance')
-                instance_item.setCheckState(0, Qt.Unchecked)
+                instance_item.setCheckState(0, Qt.CheckState.Unchecked)
 
         self.update_accept_button_state()
         self.outputfileButton.clicked.connect(self.select_output_filename)
@@ -57,13 +57,13 @@ class DataStoresReportDialog(QtWidgets.QDialog, Ui_DataStoresReportDialog):
         instances_root = self.instancesTree.invisibleRootItem()
         for i in range(instances_root.childCount()):
             env_item = instances_root.child(i)
-            if env_item.checkState(0) in (Qt.Checked, Qt.PartiallyChecked):
+            if env_item.checkState(0) in (Qt.CheckState.Checked, Qt.CheckState.PartiallyChecked):
                 env_name = str(env_item.text(0))
                 included_envs.append(env_name)
                 log.debug('Selected env name: {}'.format(env_name))
             for j in range(env_item.childCount()):
                 instance_item = env_item.child(j)
-                if instance_item.checkState(0) == Qt.Checked:
+                if instance_item.checkState(0) == Qt.CheckState.Checked:
                     instance_name = str(instance_item.text(0))
                     included_instances.append(instance_name)
                     log.debug('Selected instance name: {}'.format(instance_name))

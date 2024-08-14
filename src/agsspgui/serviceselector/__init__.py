@@ -1,4 +1,5 @@
-from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt6 import QtWidgets, QtCore, QtGui
+from PyQt6.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_configs
@@ -30,9 +31,9 @@ class ServiceSelector(QtWidgets.QWidget):
         self.layout.addWidget(self.tab_widget)
 
         self.model = ServiceModel(0, 3, self)
-        self.model.setHeaderData(self.NAME, QtCore.Qt.Horizontal, 'Name')
-        self.model.setHeaderData(self.TYPE, QtCore.Qt.Horizontal, 'Type')
-        self.model.setHeaderData(self.CATEGORY, QtCore.Qt.Horizontal, 'Category')
+        self.model.setHeaderData(self.NAME, Qt.Orientation.Horizontal, 'Name')
+        self.model.setHeaderData(self.TYPE, Qt.Orientation.Horizontal, 'Type')
+        self.model.setHeaderData(self.CATEGORY, Qt.Orientation.Horizontal, 'Category')
 
         configs = get_configs(config_dir=get_config_dir())
         categories = []
@@ -47,7 +48,7 @@ class ServiceSelector(QtWidgets.QWidget):
                 no_category_count += 1
 
             config_item = CheckableItem(config_name)
-            config_item.setFlags(config_item.flags() | QtCore.Qt.ItemIsTristate)
+            config_item.setFlags(config_item.flags() | Qt.ItemFlag.ItemIsAutoTristate)
 
             services = config.get('services')
             default_service_properties = config.get('default_service_properties')
@@ -62,7 +63,7 @@ class ServiceSelector(QtWidgets.QWidget):
             proxy_model = QtCore.QSortFilterProxyModel(self)
             proxy_model.setSourceModel(self.model)
             proxy_model.setFilterKeyColumn(self.CATEGORY)
-            proxy_model.setFilterRegExp(QtCore.QRegExp(category, QtCore.Qt.CaseSensitive, QtCore.QRegExp.FixedString))
+            proxy_model.setFilterFixedString(category)
             self.add_tab(proxy_model, category)
 
         if no_category_count > 0:
@@ -75,14 +76,14 @@ class ServiceSelector(QtWidgets.QWidget):
 
     def add_tab(self, model, heading):
         tree_view = QtWidgets.QTreeView()
-        tree_view.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        tree_view.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
         tree_view.setModel(model)
         tree_view.setAlternatingRowColors(True)
-        tree_view.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
-        tree_view.setFrameShape(QtWidgets.QFrame.NoFrame)
+        tree_view.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.NoSelection)
+        tree_view.setFrameShape(QtWidgets.QFrame.Shape.NoFrame)
         tree_view.header().setMinimumSectionSize(100)
         tree_view.header().setStretchLastSection(False)
-        tree_view.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        tree_view.header().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.Stretch)
         self.tab_widget.addTab(tree_view, heading)
 
     def selected_items_changed(self):
@@ -94,13 +95,13 @@ class ServiceSelector(QtWidgets.QWidget):
         included_services = []
         for i in range(self.model.rowCount()):
             config_item = self.model.item(i, self.NAME)
-            if config_item.checkState() in (QtCore.Qt.Checked, QtCore.Qt.PartiallyChecked):
+            if config_item.checkState() in (Qt.CheckState.Checked, Qt.CheckState.PartiallyChecked):
                 config_name = str(config_item.text())
                 included_configs.append(config_name)
                 log.debug('Selected config name: {}'.format(config_name))
             for j in range(config_item.rowCount()):
                 service_item = config_item.child(j, self.NAME)
-                if service_item.checkState() == QtCore.Qt.Checked:
+                if service_item.checkState() == Qt.CheckState.Checked:
                     service_name = str(service_item.text())
                     included_services.append(service_name)
                     log.debug('Selected service name: {}'.format(service_name))
@@ -116,7 +117,7 @@ class CheckableItem(QtGui.QStandardItem):
         state = self.checkState()
         super(CheckableItem, self).setData(value, role)
         if (
-            role == QtCore.Qt.CheckStateRole and
+            role == Qt.ItemDataRole.CheckStateRole and
             state != self.checkState()
         ):
             model = self.model()
@@ -138,24 +139,24 @@ class ServiceModel(QtGui.QStandardItemModel):
         checked = item.checkState()
         log.debug('Item {} {}'.format(
             item.text(),
-            'checked' if checked in (QtCore.Qt.PartiallyChecked, QtCore.Qt.Checked) else 'unchecked'
+            'checked' if checked in (Qt.CheckState.PartiallyChecked, Qt.CheckState.Checked) else 'unchecked'
         ))
         parent = item.parent()
         if not parent:
-            if checked != QtCore.Qt.PartiallyChecked:
+            if checked != Qt.CheckState.PartiallyChecked:
                 for i in range(item.rowCount()):
                     item.child(i).setCheckState(checked)
         else:
             checked_count = 0
             for i in range(parent.rowCount()):
-                if parent.child(i).checkState() == QtCore.Qt.Checked:
+                if parent.child(i).checkState() == Qt.CheckState.Checked:
                     checked_count += 1
             if checked_count == 0:
-                parent.setCheckState(QtCore.Qt.Unchecked)
+                parent.setCheckState(Qt.CheckState.Unchecked)
             elif checked_count == parent.rowCount():
-                parent.setCheckState(QtCore.Qt.Checked)
+                parent.setCheckState(Qt.CheckState.Checked)
             else:
-                parent.setCheckState(QtCore.Qt.PartiallyChecked)
+                parent.setCheckState(Qt.CheckState.PartiallyChecked)
         self.itemChecked.connect(self.handle_item_checked)
         self.checkedItemsChanged.emit()
 

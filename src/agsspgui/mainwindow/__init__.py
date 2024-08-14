@@ -1,6 +1,6 @@
 import logging
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 from ags_service_publisher.runner import Runner
 from ags_service_publisher.logging_io import setup_logger
 
@@ -46,18 +46,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.config_dir = get_config_dir()
         self.log_dir = get_log_dir()
         self.report_dir = get_report_dir()
-
+    
     def closeEvent(self, event):
         log.debug('closeEvent triggered')
         result = QtWidgets.QMessageBox.question(
             self,
             'Exit - AGS Service Publisher',
             'Are you sure you want to exit?',
-            QtWidgets.QMessageBox.Yes,
-            QtWidgets.QMessageBox.No
+            QtWidgets.QMessageBox.StandardButton.Yes,
+            QtWidgets.QMessageBox.StandardButton.No
         )
 
-        if result == QtWidgets.QMessageBox.Yes:
+        if result == QtWidgets.QMessageBox.StandardButton.Yes:
             self.worker_pool.stop_all_workers()
             log.debug('Exiting application!')
             event.accept()
@@ -165,14 +165,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                         .format(worker_id, exitcode, result)
                     )
                 result_dialog.setWindowTitle('ArcGIS Install Info - AGS Service Publisher')
-                result_dialog.setIcon(QtWidgets.QMessageBox.Information)
+                result_dialog.setIcon(QtWidgets.QMessageBox.Icon.Information)
                 result_dialog.setText(str(result))
             except Exception as e:
                 result_dialog.setWindowTitle('Error - AGS Service Publisher')
-                result_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+                result_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
                 result_dialog.setText(str(e))
             finally:
-                result_dialog.exec_()
+                result_dialog.exec()
 
         worker = SubprocessWorker(
             target=get_install_info,
@@ -188,24 +188,24 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         try:
             result_dialog.setWindowTitle('Executable Path - AGS Service Publisher')
-            result_dialog.setIcon(QtWidgets.QMessageBox.Information)
+            result_dialog.setIcon(QtWidgets.QMessageBox.Icon.Information)
             result_dialog.setText(get_app_path())
         except Exception as e:
             result_dialog.setWindowTitle('Error - AGS Service Publisher')
-            result_dialog.setIcon(QtWidgets.QMessageBox.Critical)
+            result_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
             result_dialog.setText(str(e))
         finally:
-            result_dialog.exec_()
+            result_dialog.exec()
 
     def about(self):
         about_dialog = AboutDialog(self)
-        about_dialog.exec_()
+        about_dialog.exec()
 
     def show_publish_dialog(self):
         try:
             publish_dialog = PublishDialog(self)
             publish_dialog.publishSelected.connect(self.publish_services)
-            publish_dialog.exec_()
+            publish_dialog.exec()
         except Exception:
             log.exception('An error occurred while showing the Publish dialog')
 
@@ -213,7 +213,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             mxd_report_dialog = APRXConverterDialog(self)
             mxd_report_dialog.runConverter.connect(self.run_aprx_converter)
-            mxd_report_dialog.exec_()
+            mxd_report_dialog.exec()
         except Exception:
             log.exception('An error occurred while showing the MXD Report dialog')
 
@@ -221,7 +221,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             mxd_report_dialog = MXDReportDialog(self)
             mxd_report_dialog.runReport.connect(self.mxd_data_sources_report)
-            mxd_report_dialog.exec_()
+            mxd_report_dialog.exec()
         except Exception:
             log.exception('An error occurred while showing the MXD Report dialog')
 
@@ -229,7 +229,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             dataset_usages_report_dialog = DatasetUsagesReportDialog(self)
             dataset_usages_report_dialog.runReport.connect(self.dataset_usages_report)
-            dataset_usages_report_dialog.exec_()
+            dataset_usages_report_dialog.exec()
         except Exception:
             log.exception('An error occurred while showing the Dataset Usages Report dialog')
 
@@ -237,7 +237,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             data_stores_report_dialog = DataStoresReportDialog(self)
             data_stores_report_dialog.runReport.connect(self.data_stores_report)
-            data_stores_report_dialog.exec_()
+            data_stores_report_dialog.exec()
         except Exception:
             log.exception('An error occurred while showing the Data Stores Report dialog')
 
@@ -273,16 +273,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             raise RuntimeError('Unknown message level: {}'.format(level))
 
     def log_info_message(self, message):
-        self.logWindow.appendHtml('<font color="black">{}</font>'.format(escape_html(message)))
-
+        self.logWindow.appendPlainText(message)
     def log_debug_message(self, message):
-        self.logWindow.appendHtml('<font color="gray">{}</font>'.format(escape_html(message)))
+        self.logWindow.appendHtml('<font color="{}">{}</font>'.format('gray', escape_html(message)))
 
     def log_warning_message(self, message):
-        self.logWindow.appendHtml('<font color="blue">{}</font>'.format(escape_html(message)))
+        self.logWindow.appendHtml('<font color="{}">{}</font>'.format('blue', escape_html(message)))
 
     def log_success_message(self, message):
-        self.logWindow.appendHtml('<font color="green">{}</font>'.format(escape_html(message)))
+        self.logWindow.appendHtml('<font color="{}">{}</font>'.format('green', escape_html(message)))
 
     def log_error_message(self, message):
-        self.logWindow.appendHtml('<font color="red">{}</font>'.format(escape_html(message)))
+        self.logWindow.appendHtml('<font color="{}">{}</font>'.format('red', escape_html(message)))

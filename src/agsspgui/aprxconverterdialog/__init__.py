@@ -1,5 +1,5 @@
-from PyQt5 import QtWidgets, QtCore
-from PyQt5.QtCore import Qt
+from PyQt6 import QtWidgets, QtCore
+from PyQt6.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
 from ags_service_publisher.config_io import get_config
@@ -19,11 +19,11 @@ class APRXConverterDialog(QtWidgets.QDialog, Ui_APRXConverterDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        self.setWindowFlags(self.windowFlags() | Qt.WindowMaximizeButtonHint | Qt.WindowMinimizeButtonHint)
-        self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.Ok)
+        self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint | Qt.WindowType.WindowMinimizeButtonHint)
+        self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Ok)
         self._acceptButton.setText('Run converter')
 
-        self.envsTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        self.envsTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.Stretch)
 
         self.selected_configs = ()
         self.selected_services = ()
@@ -33,7 +33,7 @@ class APRXConverterDialog(QtWidgets.QDialog, Ui_APRXConverterDialog):
             env_item = QtWidgets.QTreeWidgetItem(self.envsTree)
             env_item.setText(0, env_name)
             env_item.setText(1, 'Environment')
-            env_item.setCheckState(0, Qt.Unchecked)
+            env_item.setCheckState(0, Qt.CheckState.Unchecked)
 
         self.update_accept_button_state()
         self.buttonBox.accepted.connect(self.run_converter_on_selected_items)
@@ -59,7 +59,7 @@ class APRXConverterDialog(QtWidgets.QDialog, Ui_APRXConverterDialog):
         envs_root = self.envsTree.invisibleRootItem()
         for i in range(envs_root.childCount()):
             env_item = envs_root.child(i)
-            if env_item.checkState(0) == Qt.Checked:
+            if env_item.checkState(0) == Qt.CheckState.Checked:
                 env_name = str(env_item.text(0))
                 included_envs.append(env_name)
                 log.debug('Selected env name: {}'.format(env_name))

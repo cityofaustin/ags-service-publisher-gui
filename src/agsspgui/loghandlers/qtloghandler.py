@@ -1,5 +1,5 @@
 import logging
-from PyQt5 import QtCore
+from PyQt6 import QtCore
 
 
 class QtLogHandler(logging.Handler):

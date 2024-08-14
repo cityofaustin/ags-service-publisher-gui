@@ -6,7 +6,7 @@ setup(
     ],
     install_requires=[
         'ags_service_publisher',
-        'PyQt5',
+        'PyQt6',
     ],
     use_scm_version=True,
 )

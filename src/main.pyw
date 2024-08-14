@@ -2,7 +2,7 @@ import logging
 import multiprocessing
 import sys
 
-from PyQt5 import QtWidgets
+from PyQt6 import QtWidgets
 from ags_service_publisher.logging_io import setup_logger, setup_console_log_handler
 
 from agsspgui.helpers.pathhelpers import get_app_path
@@ -18,4 +18,4 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     main_window = MainWindow()
     main_window.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())

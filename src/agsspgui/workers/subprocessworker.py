@@ -6,7 +6,7 @@ from datetime import timedelta
 from logging.handlers import QueueHandler, QueueListener
 
 
-from PyQt5 import QtCore
+from PyQt6 import QtCore
 from ags_service_publisher.logging_io import setup_logger
 
 from ..loghandlers.qtloghandler import QtLogHandler

@@ -1,4 +1,4 @@
 archook@git+https://github.com/JamesRamm/archook
 pyinstaller
-PyQt5
-qt5-applications
+PyQt6
+qt6-applications
