@@ -18,6 +18,7 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
+        self.settings = QtCore.QSettings()
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint | Qt.WindowType.WindowMinimizeButtonHint)
         self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Ok)
@@ -44,6 +45,20 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
         self.buttonBox.accepted.connect(self.publish_selected_items)
         self.serviceSelector.selectionChanged.connect(self.service_selector_selection_changed)
         self.instancesTree.itemChanged.connect(self.update_publish_button_state)
+        QtCore.QTimer.singleShot(0, self.read_settings)
+        self.finished.connect(self.write_settings)
+
+    def write_settings(self):
+        self.settings.beginGroup('WindowSettings/ModalDialogs')
+        self.settings.setValue('geometry', self.saveGeometry())
+        self.settings.setValue('splitterState', self.splitter.saveState())
+        self.settings.endGroup()
+
+    def read_settings(self):
+        self.settings.beginGroup('WindowSettings/ModalDialogs')
+        self.restoreGeometry(self.settings.value('geometry', QtCore.QByteArray()))
+        self.splitter.restoreState(self.settings.value('splitterState', QtCore.QByteArray()))
+        self.settings.endGroup()
 
     def service_selector_selection_changed(self, selected_configs, selected_services):
         self.selected_configs = selected_configs

@@ -19,6 +19,7 @@ class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog)
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent)
         self.setupUi(self)
+        self.settings = QtCore.QSettings()
 
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowMaximizeButtonHint | Qt.WindowType.WindowMinimizeButtonHint)
         self._acceptButton = self.buttonBox.button(QtWidgets.QDialogButtonBox.StandardButton.Ok)
@@ -42,6 +43,20 @@ class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog)
         self.outputfileButton.clicked.connect(self.select_output_filename)
         self.buttonBox.accepted.connect(self.run_report_on_selected_items)
         self.instancesTree.itemChanged.connect(self.update_accept_button_state)
+        QtCore.QTimer.singleShot(0, self.read_settings)
+        self.finished.connect(self.write_settings)
+
+    def write_settings(self):
+        self.settings.beginGroup('WindowSettings/ModalDialogs')
+        self.settings.setValue('geometry', self.saveGeometry())
+        self.settings.setValue('splitterState', self.splitter.saveState())
+        self.settings.endGroup()
+
+    def read_settings(self):
+        self.settings.beginGroup('WindowSettings/ModalDialogs')
+        self.restoreGeometry(self.settings.value('geometry', QtCore.QByteArray()))
+        self.splitter.restoreState(self.settings.value('splitterState', QtCore.QByteArray()))
+        self.settings.endGroup()
 
     def update_accept_button_state(self):
         log.debug('Updating accept button state')

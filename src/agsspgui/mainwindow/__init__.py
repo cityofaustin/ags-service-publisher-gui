@@ -1,6 +1,6 @@
 import logging
 
-from PyQt6 import QtWidgets
+from PyQt6 import QtCore, QtWidgets
 from ags_service_publisher.runner import Runner
 from ags_service_publisher.logging_io import setup_logger
 
@@ -26,6 +26,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.setupUi(self)
+        self.defaultGeometry = self.saveGeometry()
+        self.defaultWindowState = self.saveState()
+        self.settings = QtCore.QSettings()
         self.actionPublish_Services.triggered.connect(self.show_publish_dialog)
         self.actionAPRX_Converter.triggered.connect(self.show_aprx_converter_dialog)
         self.actionMXD_Data_Sources_Report.triggered.connect(self.show_mxd_report_dialog)
@@ -34,6 +37,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionGetInstallInfo.triggered.connect(self.get_install_info)
         self.actionGetExecutablePath.triggered.connect(self.get_executable_path)
         self.actionAbout.triggered.connect(self.about)
+        self.actionResetSettingsToDefault.triggered.connect(self.reset_settings_to_default)
         self.actionTestLogWindow.triggered.connect(self.test_log_window)
         self.actionExit.triggered.connect(self.close)
 
@@ -46,9 +50,30 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.config_dir = get_config_dir()
         self.log_dir = get_log_dir()
         self.report_dir = get_report_dir()
+
+        QtCore.QTimer.singleShot(0, self.read_settings)
+    
+    def write_settings(self):
+        self.settings.beginGroup('WindowSettings/MainWindow')
+        self.settings.setValue('geometry', self.saveGeometry())
+        self.settings.setValue('windowState', self.saveState())
+        self.settings.endGroup()
+
+    def read_settings(self):
+        self.settings.beginGroup('WindowSettings/MainWindow')
+        self.restoreGeometry(self.settings.value('geometry', QtCore.QByteArray()))
+        self.restoreState(self.settings.value('windowState', QtCore.QByteArray()))
+        self.settings.endGroup()
+    
+    def reset_settings_to_default(self):
+        log.debug('Resetting settings to default')
+        self.settings.clear()
+        self.restoreGeometry(self.defaultGeometry)
+        self.restoreState(self.defaultWindowState)
+        self.move(self.screen().geometry().center() - QtCore.QRect(QtCore.QPoint(), self.frameGeometry().size()).center())
     
     def closeEvent(self, event):
-        log.debug('closeEvent triggered')
+        log.debug('MainWindow closeEvent triggered')
         result = QtWidgets.QMessageBox.question(
             self,
             'Exit - AGS Service Publisher',
@@ -60,9 +85,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if result == QtWidgets.QMessageBox.StandardButton.Yes:
             self.worker_pool.stop_all_workers()
             log.debug('Exiting application!')
+            self.write_settings()
             event.accept()
         else:
-            log.debug('Ignoring closeEvent')
+            log.debug(f'Ignoring MainWindow closeEvent')
             event.ignore()
 
     def publish_services(self, included_configs, included_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services, publish_services):
@@ -172,7 +198,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 result_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
                 result_dialog.setText(str(e))
             finally:
-                result_dialog.exec()
+                result_dialog.open()
 
         worker = SubprocessWorker(
             target=get_install_info,
@@ -195,17 +221,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             result_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
             result_dialog.setText(str(e))
         finally:
-            result_dialog.exec()
+            result_dialog.open()
 
     def about(self):
         about_dialog = AboutDialog(self)
-        about_dialog.exec()
+        about_dialog.open()
 
     def show_publish_dialog(self):
         try:
             publish_dialog = PublishDialog(self)
             publish_dialog.publishSelected.connect(self.publish_services)
-            publish_dialog.exec()
+            publish_dialog.open()
         except Exception:
             log.exception('An error occurred while showing the Publish dialog')
 
@@ -213,7 +239,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             mxd_report_dialog = APRXConverterDialog(self)
             mxd_report_dialog.runConverter.connect(self.run_aprx_converter)
-            mxd_report_dialog.exec()
+            mxd_report_dialog.open()
         except Exception:
             log.exception('An error occurred while showing the MXD Report dialog')
 
@@ -221,7 +247,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             mxd_report_dialog = MXDReportDialog(self)
             mxd_report_dialog.runReport.connect(self.mxd_data_sources_report)
-            mxd_report_dialog.exec()
+            mxd_report_dialog.open()
         except Exception:
             log.exception('An error occurred while showing the MXD Report dialog')
 
@@ -229,7 +255,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             dataset_usages_report_dialog = DatasetUsagesReportDialog(self)
             dataset_usages_report_dialog.runReport.connect(self.dataset_usages_report)
-            dataset_usages_report_dialog.exec()
+            dataset_usages_report_dialog.open()
         except Exception:
             log.exception('An error occurred while showing the Dataset Usages Report dialog')
 
@@ -237,7 +263,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             data_stores_report_dialog = DataStoresReportDialog(self)
             data_stores_report_dialog.runReport.connect(self.data_stores_report)
-            data_stores_report_dialog.exec()
+            data_stores_report_dialog.open()
         except Exception:
             log.exception('An error occurred while showing the Data Stores Report dialog')
 

@@ -70,7 +70,7 @@
      <x>0</x>
      <y>0</y>
      <width>640</width>
-     <height>18</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -104,9 +104,16 @@
     <addaction name="actionPublish_Services"/>
     <addaction name="actionAPRX_Converter"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionResetSettingsToDefault"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuPublishing"/>
    <addaction name="menuReports"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -135,7 +142,7 @@
     <string>Publish Services</string>
    </property>
   </action>
-<action name="actionAPRX_Converter">
+  <action name="actionAPRX_Converter">
    <property name="text">
     <string>APRX Converter</string>
    </property>
@@ -158,6 +165,11 @@
   <action name="actionData_Stores_Report">
    <property name="text">
     <string>Data Stores Report</string>
+   </property>
+  </action>
+  <action name="actionResetSettingsToDefault">
+   <property name="text">
+    <string>Reset settings to default</string>
    </property>
   </action>
  </widget>
