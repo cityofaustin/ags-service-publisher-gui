@@ -6,6 +6,7 @@ from ags_service_publisher.logging_io import setup_logger
 
 from ..aboutdialog import AboutDialog
 from ..helpers.arcpyhelpers import get_install_info
+from ..helpers.confighelpers import reload_configs
 from ..helpers.pathhelpers import get_app_path, get_config_dir, get_log_dir, get_report_dir
 from ..helpers.texthelpers import escape_html
 from ..loghandlers.qtloghandler import QtLogHandler
@@ -16,7 +17,7 @@ from ..mxdreportdialog import MXDReportDialog
 from ..datasetusagesreportdialog import DatasetUsagesReportDialog
 from ..datastoresreportdialog import DataStoresReportDialog
 from ..resultdialog import ResultDialog
-from ..workers import SubprocessWorker, WorkerPool
+from ..workers import SubprocessWorker, ThreadWorker, WorkerPool
 
 log = setup_logger(__name__)
 
@@ -36,6 +37,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.actionGetInstallInfo.triggered.connect(self.get_install_info)
         self.actionGetExecutablePath.triggered.connect(self.get_executable_path)
         self.actionAbout.triggered.connect(self.about)
+        self.actionReload_configuration_files.triggered.connect(lambda: self.load_configs(show_result_on_success=True, reload=True))
         self.actionResetSettingsToDefault.triggered.connect(self.reset_settings_to_default)
         self.actionTestLogWindow.triggered.connect(self.test_log_window)
         self.actionExit.triggered.connect(self.close)
@@ -51,6 +53,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.report_dir = get_report_dir()
 
         QtCore.QTimer.singleShot(0, self.read_settings)
+        QtCore.QTimer.singleShot(0, self.load_configs)
     
     def write_settings(self):
         self.settings.beginGroup('WindowSettings/MainWindow')
@@ -89,6 +92,43 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         else:
             log.debug(f'Ignoring MainWindow closeEvent')
             event.ignore()
+    
+    def load_configs(self, show_result_on_success=False, reload=False):
+        self.menubar.setEnabled(False)
+        result_dialog = ResultDialog(self)
+        mode = 'reload' if reload else 'load'
+
+        def show_reload_configs_result(worker_id, exitcode, result):
+            try:
+                if exitcode != 0:
+                    raise RuntimeError(
+                        'An error occurred in worker {} (exit code: {}) while {}ing config files: {}'
+                        .format(worker_id, exitcode, mode, result)
+                    )
+                if show_result_on_success:
+                    result_dialog.setWindowTitle('Success - AGS Service Publisher')
+                    result_dialog.setIcon(QtWidgets.QMessageBox.Icon.Information)
+                    result_dialog.setText(f'Successfully {mode}ed configuration files.')
+                    result_dialog.open()
+            except Exception as e:
+                result_dialog.setWindowTitle('Error - AGS Service Publisher')
+                result_dialog.setIcon(QtWidgets.QMessageBox.Icon.Critical)
+                result_dialog.setText(str(e))
+                result_dialog.open()
+
+        worker = ThreadWorker(
+            target=reload_configs,
+            kwargs={
+                'config_dir': self.config_dir,
+                'mode': mode,
+                'include_userconfig': True,
+            }
+        )
+        worker.resultEmitted.connect(self.handle_worker_result)
+        worker.resultEmitted.connect(show_reload_configs_result)
+        worker.resultEmitted.connect(lambda: self.menubar.setEnabled(True))
+        self.worker_pool.add_worker(worker)
+        self.worker_pool.start_worker(worker.id)
 
     def publish_services(self, included_configs, included_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services, publish_services):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir)

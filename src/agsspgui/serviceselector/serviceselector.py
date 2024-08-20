@@ -2,9 +2,9 @@ from PyQt6 import QtWidgets, QtCore, QtGui
 from PyQt6.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
-from ags_service_publisher.config_io import get_configs
 from ags_service_publisher.services import normalize_services
 
+from ..helpers.confighelpers import get_configs_cached
 from ..helpers.pathhelpers import get_config_dir
 
 log = setup_logger(__name__)
@@ -35,7 +35,7 @@ class ServiceSelector(QtWidgets.QWidget):
         self.model.setHeaderData(self.TYPE, Qt.Orientation.Horizontal, 'Type')
         self.model.setHeaderData(self.CATEGORY, Qt.Orientation.Horizontal, 'Category')
 
-        configs = get_configs(config_dir=get_config_dir())
+        configs = get_configs_cached(config_dir=get_config_dir())
         categories = []
         no_category_count = 0
 

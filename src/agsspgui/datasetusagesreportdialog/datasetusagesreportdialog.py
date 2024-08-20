@@ -2,12 +2,12 @@ from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
-from ags_service_publisher.config_io import get_config
 from ags_service_publisher.helpers import empty_tuple
 
 from .datasetusagesreportdialog_ui import Ui_DatasetUsagesReportDialog
 
 from ..helpers.pathhelpers import get_config_dir
+from ..helpers.confighelpers import get_config_cached
 
 log = setup_logger(__name__)
 
@@ -27,7 +27,7 @@ class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog)
 
         self.instancesTree.header().setSectionResizeMode(0, QtWidgets.QHeaderView.ResizeMode.Stretch)
 
-        user_config = get_config('userconfig', config_dir=get_config_dir())
+        user_config = get_config_cached('userconfig', config_dir=get_config_dir())
         for env_name, env in user_config['environments'].items():
             env_item = QtWidgets.QTreeWidgetItem(self.instancesTree)
             env_item.setText(0, env_name)

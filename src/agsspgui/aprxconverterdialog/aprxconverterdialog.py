@@ -2,11 +2,11 @@ from PyQt6 import QtWidgets, QtCore
 from PyQt6.QtCore import Qt
 
 from ags_service_publisher.logging_io import setup_logger
-from ags_service_publisher.config_io import get_config
 
 from .aprxconverterdialog_ui import Ui_APRXConverterDialog
 
 from ..helpers.pathhelpers import get_config_dir
+from ..helpers.confighelpers import get_config_cached
 
 log = setup_logger(__name__)
 
@@ -29,7 +29,7 @@ class APRXConverterDialog(QtWidgets.QDialog, Ui_APRXConverterDialog):
         self.selected_configs = ()
         self.selected_services = ()
 
-        user_config = get_config('userconfig', config_dir=get_config_dir())
+        user_config = get_config_cached('userconfig', config_dir=get_config_dir())
         for env_name, env in user_config['environments'].items():
             env_item = QtWidgets.QTreeWidgetItem(self.envsTree)
             env_item.setText(0, env_name)

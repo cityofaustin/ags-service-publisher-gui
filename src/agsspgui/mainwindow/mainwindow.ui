@@ -77,6 +77,8 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="actionReload_configuration_files"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuReports">
@@ -170,6 +172,11 @@
   <action name="actionResetSettingsToDefault">
    <property name="text">
     <string>Reset settings to default</string>
+   </property>
+  </action>
+  <action name="actionReload_configuration_files">
+   <property name="text">
+    <string>Reload configuration files</string>
    </property>
   </action>
  </widget>
