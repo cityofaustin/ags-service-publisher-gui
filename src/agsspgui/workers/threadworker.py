@@ -27,13 +27,11 @@ class ThreadWorker(QtCore.QObject):
     def get_next_worker_id(self):
         return next(itertools.count())
 
-    def __init__(self, parent=None, target=None, args=(), kwargs={}, timer_check_interval=1000):
+    def __init__(self, parent=None, target=None, args=(), kwargs={}):
         super(ThreadWorker, self).__init__(parent)
         self.id = self.get_next_worker_id()
         self.exitcode = None
         self.running = False
-        self.timer = None
-        self.timer_check_interval = timer_check_interval
         self.elapsed_timer = None
         self.target = target
         self.args = tuple(args)
