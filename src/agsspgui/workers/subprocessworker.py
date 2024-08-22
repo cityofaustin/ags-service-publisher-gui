@@ -1,4 +1,3 @@
-import itertools
 import multiprocessing
 import sys
 import traceback
@@ -33,12 +32,9 @@ class SubprocessWorker(QtCore.QObject):
     messageEmitted = QtCore.pyqtSignal(int, int, str)
     resultEmitted = QtCore.pyqtSignal(int, int, object)
 
-    def get_next_worker_id(self):
-        return next(itertools.count())
-
-    def __init__(self, parent=None, target=None, args=(), kwargs={}, timer_check_interval=1000, log_handler=None):
-        super(SubprocessWorker, self).__init__(parent)
-        self.id = self.get_next_worker_id()
+    def __init__(self, worker_pool, target=None, args=(), kwargs={}, timer_check_interval=1000, log_handler=None):
+        super(SubprocessWorker, self).__init__()
+        self.id = worker_pool.get_next_worker_id()
         self.running = False
         self.timer = None
         self.timer_check_interval = timer_check_interval

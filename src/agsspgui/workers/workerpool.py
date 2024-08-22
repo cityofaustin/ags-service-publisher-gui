@@ -1,3 +1,5 @@
+import itertools
+
 from ags_service_publisher.logging_io import setup_logger
 
 log = setup_logger(__name__)
@@ -8,6 +10,10 @@ class WorkerPool:
     def __init__(self):
         log.debug('Initialized worker pool')
         self.workers = {}
+        self.id_iterator = itertools.count()
+
+    def get_next_worker_id(self):
+        return next(self.id_iterator)
 
     def add_worker(self, worker):
         log.debug('Adding worker {} to worker pool'.format(worker.id))

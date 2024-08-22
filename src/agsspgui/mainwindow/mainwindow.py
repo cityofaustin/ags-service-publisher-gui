@@ -117,6 +117,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 result_dialog.open()
 
         worker = ThreadWorker(
+            self.worker_pool,
             target=reload_configs,
             kwargs={
                 'config_dir': self.config_dir,
@@ -133,6 +134,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def publish_services(self, included_configs, included_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services, publish_services):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir)
         worker = SubprocessWorker(
+            self.worker_pool,
             target=runner.run_batch_publishing_job,
             kwargs={
                 'included_configs': included_configs,
@@ -154,6 +156,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def run_aprx_converter(self, included_configs, included_services, included_envs):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
         worker = SubprocessWorker(
+            self.worker_pool,
             target=runner.batch_convert_mxd_to_aprx,
             kwargs={
                 'included_configs': included_configs,
@@ -171,6 +174,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def mxd_data_sources_report(self, included_configs, included_services, included_envs, output_filename):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
         worker = SubprocessWorker(
+            self.worker_pool,
             target=runner.run_map_data_sources_report,
             kwargs={
                 'included_configs': included_configs,
@@ -189,6 +193,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def dataset_usages_report(self, included_datasets, included_envs, included_instances, output_filename):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
         worker = SubprocessWorker(
+            self.worker_pool,
             target=runner.run_dataset_usages_report,
             kwargs={
                 'included_datasets': included_datasets,
@@ -206,6 +211,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def data_stores_report(self, included_envs, included_instances, output_filename):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
         worker = SubprocessWorker(
+            self.worker_pool,
             target=runner.run_data_stores_report,
             kwargs={
                 'included_envs': included_envs,
@@ -240,6 +246,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 result_dialog.open()
 
         worker = SubprocessWorker(
+            self.worker_pool,
             target=get_install_info,
         )
         worker.messageEmitted.connect(self.handle_worker_message)

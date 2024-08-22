@@ -1,4 +1,3 @@
-import itertools
 import sys
 import traceback
 from datetime import timedelta
@@ -24,12 +23,10 @@ class ThreadWorker(QtCore.QObject):
 
     resultEmitted = QtCore.pyqtSignal(int, int, object)
 
-    def get_next_worker_id(self):
-        return next(itertools.count())
 
-    def __init__(self, parent=None, target=None, args=(), kwargs={}):
-        super(ThreadWorker, self).__init__(parent)
-        self.id = self.get_next_worker_id()
+    def __init__(self, worker_pool, target=None, args=(), kwargs={}):
+        super(ThreadWorker, self).__init__()
+        self.id = worker_pool.get_next_worker_id()
         self.exitcode = None
         self.running = False
         self.elapsed_timer = None
@@ -58,7 +55,7 @@ class ThreadWorker(QtCore.QObject):
 
         log.debug('Thread {} started'.format(self.thread))
 
-        self.wrap_target_function(self.target, **self.kwargs)
+        QtCore.QTimer.singleShot(0, lambda: self.wrap_target_function(self.target, *self.args, **self.kwargs))
 
 
     @QtCore.pyqtSlot()
