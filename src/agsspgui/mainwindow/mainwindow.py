@@ -98,17 +98,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         result_dialog = ResultDialog(self)
         mode = 'reload' if reload else 'load'
 
-        def show_reload_configs_result(worker_id, exitcode, result):
+        def show_reload_configs_result(worker, exitcode, result):
             try:
                 if exitcode != 0:
                     raise RuntimeError(
-                        'An error occurred in worker {} (exit code: {}) while {}ing config files: {}'
-                        .format(worker_id, exitcode, mode, result)
+                        f'An error occurred in {worker.name} (exit code: {exitcode}) while {mode}ing config files: {result}'
                     )
                 if show_result_on_success:
                     result_dialog.setWindowTitle('Success - AGS Service Publisher')
                     result_dialog.setIcon(QtWidgets.QMessageBox.Icon.Information)
-                    result_dialog.setText(f'Successfully {mode}ed configuration files.')
+                    result_dialog.setText(str(result))
                     result_dialog.open()
             except Exception as e:
                 result_dialog.setWindowTitle('Error - AGS Service Publisher')
@@ -129,7 +128,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         worker.resultEmitted.connect(show_reload_configs_result)
         worker.resultEmitted.connect(lambda: self.menubar.setEnabled(True))
         self.worker_pool.add_worker(worker)
-        self.worker_pool.start_worker(worker.id)
+        self.worker_pool.start_worker(worker)
 
     def publish_services(self, included_configs, included_services, included_envs, included_instances, create_backups, copy_source_files_from_staging_folder, delete_existing_services, publish_services):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir)
@@ -151,7 +150,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         worker.messageEmitted.connect(self.handle_worker_message)
         worker.resultEmitted.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
-        self.worker_pool.start_worker(worker.id)
+        self.worker_pool.start_worker(worker)
 
     def run_aprx_converter(self, included_configs, included_services, included_envs):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
@@ -169,7 +168,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         worker.messageEmitted.connect(self.handle_worker_message)
         worker.resultEmitted.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
-        self.worker_pool.start_worker(worker.id)
+        self.worker_pool.start_worker(worker)
 
     def mxd_data_sources_report(self, included_configs, included_services, included_envs, output_filename):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
@@ -188,7 +187,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         worker.messageEmitted.connect(self.handle_worker_message)
         worker.resultEmitted.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
-        self.worker_pool.start_worker(worker.id)
+        self.worker_pool.start_worker(worker)
 
     def dataset_usages_report(self, included_datasets, included_envs, included_instances, output_filename):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
@@ -206,7 +205,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         worker.messageEmitted.connect(self.handle_worker_message)
         worker.resultEmitted.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
-        self.worker_pool.start_worker(worker.id)
+        self.worker_pool.start_worker(worker)
 
     def data_stores_report(self, included_envs, included_instances, output_filename):
         runner = Runner(config_dir=self.config_dir, log_dir=self.log_dir, report_dir=self.report_dir)
@@ -223,17 +222,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         worker.messageEmitted.connect(self.handle_worker_message)
         worker.resultEmitted.connect(self.handle_worker_result)
         self.worker_pool.add_worker(worker)
-        self.worker_pool.start_worker(worker.id)
+        self.worker_pool.start_worker(worker)
 
     def get_install_info(self):
         result_dialog = ResultDialog(self)
 
-        def show_install_info_result(worker_id, exitcode, result):
+        def show_install_info_result(worker, exitcode, result):
             try:
                 if exitcode != 0:
                     raise RuntimeError(
-                        'An error occurred in worker {} (exit code: {}) while getting ArcGIS Install Info: {}'
-                        .format(worker_id, exitcode, result)
+                        f'An error occurred in {worker.name} (exit code: {exitcode}) while getting ArcGIS Install Info: {result}'
                     )
                 result_dialog.setWindowTitle('ArcGIS Install Info - AGS Service Publisher')
                 result_dialog.setIcon(QtWidgets.QMessageBox.Icon.Information)
@@ -253,7 +251,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         worker.resultEmitted.connect(self.handle_worker_result)
         worker.resultEmitted.connect(show_install_info_result)
         self.worker_pool.add_worker(worker)
-        self.worker_pool.start_worker(worker.id)
+        self.worker_pool.start_worker(worker)
 
     def get_executable_path(self):
         result_dialog = ResultDialog(self)
@@ -320,12 +318,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.log_warning_message('warning')
         self.log_error_message('error')
 
-    def handle_worker_message(self, worker_id, level, message):
-        message = 'Worker {}: {}'.format(worker_id, message)
+    def handle_worker_message(self, worker, level, message):
+        message = f'{worker.name}: {message}'
         log.log(level, message)
 
-    def handle_worker_result(self, worker_id, exitcode, result):
-        log.debug('Worker {} resulted in exitcode {} with result value: {}'.format(worker_id, exitcode, result))
+    def handle_worker_result(self, worker, exitcode, result):
+        log.debug(f'{worker.name} resulted in exitcode {exitcode} with result value: {result}')
         if exitcode == 0:
             self.log_success_message(result)
         else:
@@ -342,18 +340,18 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         elif levelname == 'ERROR':
             self.log_error_message(message)
         else:
-            raise RuntimeError('Unknown message level: {}'.format(level))
+            raise RuntimeError(f'Unknown message level: {level}')
 
     def log_info_message(self, message):
         self.logWindow.appendPlainText(message)
     def log_debug_message(self, message):
-        self.logWindow.appendHtml('<font color="{}">{}</font>'.format('gray', escape_html(message)))
+        self.logWindow.appendHtml(f'<font color="gray">{escape_html(message)}</font>')
 
     def log_warning_message(self, message):
-        self.logWindow.appendHtml('<font color="{}">{}</font>'.format('blue', escape_html(message)))
+        self.logWindow.appendHtml(f'<font color="blue">{escape_html(message)}</font>')
 
     def log_success_message(self, message):
-        self.logWindow.appendHtml('<font color="{}">{}</font>'.format('green', escape_html(message)))
+        self.logWindow.appendHtml(f'<font color="green">{escape_html(message)}</font>')
 
     def log_error_message(self, message):
-        self.logWindow.appendHtml('<font color="{}">{}</font>'.format('red', escape_html(message)))
+        self.logWindow.appendHtml(f'<font color="red">{escape_html(message)}</font>')

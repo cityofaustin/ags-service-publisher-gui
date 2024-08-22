@@ -78,7 +78,7 @@ class MXDReportDialog(QtWidgets.QDialog, Ui_MXDReportDialog):
             if env_item.checkState(0) == Qt.CheckState.Checked:
                 env_name = str(env_item.text(0))
                 included_envs.append(env_name)
-                log.debug('Selected env name: {}'.format(env_name))
+                log.debug(f'Selected env name: {env_name}')
         return self.selected_configs, self.selected_services, included_envs
 
     def run_report_on_selected_items(self):

@@ -73,19 +73,19 @@ class DatasetUsagesReportDialog(QtWidgets.QDialog, Ui_DatasetUsagesReportDialog)
         included_instances = []
         instances_root = self.instancesTree.invisibleRootItem()
         for included_dataset in included_datasets:
-            log.debug('Included dataset: {}'.format(included_dataset))
+            log.debug(f'Included dataset: {included_dataset}')
         for i in range(instances_root.childCount()):
             env_item = instances_root.child(i)
             if env_item.checkState(0) in (Qt.CheckState.Checked, Qt.CheckState.PartiallyChecked):
                 env_name = str(env_item.text(0))
                 included_envs.append(env_name)
-                log.debug('Selected env name: {}'.format(env_name))
+                log.debug(f'Selected env name: {env_name}')
             for j in range(env_item.childCount()):
                 instance_item = env_item.child(j)
                 if instance_item.checkState(0) == Qt.CheckState.Checked:
                     instance_name = str(instance_item.text(0))
                     included_instances.append(instance_name)
-                    log.debug('Selected instance name: {}'.format(instance_name))
+                    log.debug(f'Selected instance name: {instance_name}')
         return included_datasets, included_envs, included_instances
 
     def run_report_on_selected_items(self):

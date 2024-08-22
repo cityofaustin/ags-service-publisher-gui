@@ -54,7 +54,7 @@ class ServiceSelector(QtWidgets.QWidget):
             default_service_properties = config.get('default_service_properties')
             for service_name, service_type, _ in normalize_services(services, default_service_properties):
                 service_item = CheckableItem(service_name)
-                config_item.appendRow((service_item, QtGui.QStandardItem('{} Service'.format(service_type)), QtGui.QStandardItem(category)))
+                config_item.appendRow((service_item, QtGui.QStandardItem(f'{service_type} Service'), QtGui.QStandardItem(category)))
             self.model.appendRow((config_item, QtGui.QStandardItem('Config Name'), QtGui.QStandardItem(category)))
 
         self.add_tab(self.model, 'All')
@@ -98,13 +98,13 @@ class ServiceSelector(QtWidgets.QWidget):
             if config_item.checkState() in (Qt.CheckState.Checked, Qt.CheckState.PartiallyChecked):
                 config_name = str(config_item.text())
                 included_configs.append(config_name)
-                log.debug('Selected config name: {}'.format(config_name))
+                log.debug(f'Selected config name: {config_name}')
             for j in range(config_item.rowCount()):
                 service_item = config_item.child(j, self.NAME)
                 if service_item.checkState() == Qt.CheckState.Checked:
                     service_name = str(service_item.text())
                     included_services.append(service_name)
-                    log.debug('Selected service name: {}'.format(service_name))
+                    log.debug(f'Selected service name: {service_name}')
         return included_configs, included_services
 
 
@@ -137,10 +137,7 @@ class ServiceModel(QtGui.QStandardItemModel):
     def handle_item_checked(self, item):
         self.itemChecked.disconnect(self.handle_item_checked)
         checked = item.checkState()
-        log.debug('Item {} {}'.format(
-            item.text(),
-            'checked' if checked in (Qt.CheckState.PartiallyChecked, Qt.CheckState.Checked) else 'unchecked'
-        ))
+        log.debug(f'Item {item.text()} {"checked" if checked in (Qt.CheckState.PartiallyChecked, Qt.CheckState.Checked) else "unchecked"}')
         parent = item.parent()
         if not parent:
             if checked != Qt.CheckState.PartiallyChecked:

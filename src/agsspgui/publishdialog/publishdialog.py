@@ -82,13 +82,13 @@ class PublishDialog(QtWidgets.QDialog, Ui_PublishDialog):
             if env_item.checkState(0) in (Qt.CheckState.Checked, Qt.CheckState.PartiallyChecked):
                 env_name = str(env_item.text(0))
                 included_envs.append(env_name)
-                log.debug('Selected env name: {}'.format(env_name))
+                log.debug(f'Selected env name: {env_name}')
             for j in range(env_item.childCount()):
                 instance_item = env_item.child(j)
                 if instance_item.checkState(0) == Qt.CheckState.Checked:
                     instance_name = str(instance_item.text(0))
                     included_instances.append(instance_name)
-                    log.debug('Selected instance name: {}'.format(instance_name))
+                    log.debug(f'Selected instance name: {instance_name}')
         create_backups = self.createBackupsCheckBox.isChecked()
         copy_source_files_from_staging_folder = self.copyStagingFilesCheckBox.isChecked()
         delete_existing_services = self.deleteExistingServicesCheckBox.isChecked()

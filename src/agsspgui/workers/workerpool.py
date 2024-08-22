@@ -16,37 +16,34 @@ class WorkerPool:
         return next(self.id_iterator)
 
     def add_worker(self, worker):
-        log.debug('Adding worker {} to worker pool'.format(worker.id))
         worker.resultEmitted.connect(self.remove_worker)
+        log.debug(f'Adding {worker.name} to worker pool')
         self.workers[worker.id] = worker
 
-    def remove_worker(self, worker_id):
-        log.debug('Removing worker {} from worker pool'.format(worker_id))
-        worker = self.workers[worker_id]
-        self.stop_worker(worker_id)
+    def remove_worker(self, worker):
+        log.debug(f'Removing {worker.name} from worker pool')
+        self.stop_worker(worker)
         worker.thread.deleteLater()
         worker.deleteLater()
         del self.workers[worker.id]
         del worker
 
-    def start_worker(self, worker_id):
-        log.debug('Starting worker {} in worker pool'.format(worker_id))
-        worker = self.workers[worker_id]
+    def start_worker(self, worker):
+        log.debug(f'Starting {worker.name} in worker pool')
         worker.thread.start()
 
-    def stop_worker(self, worker_id):
-        log.debug('Stopping worker {} in worker pool'.format(worker_id))
-        worker = self.workers[worker_id]
+    def stop_worker(self, worker):
+        log.debug(f'Stopping {worker.name} in worker pool')
         if worker.thread.isRunning():
             worker.thread.quit()
             worker.thread.wait()
 
     def stop_all_workers(self):
         log.debug('Stopping all workers in worker pool')
-        for worker_id, worker in self.workers.items():
-            self.stop_worker(worker_id)
+        for worker in self.workers.values():
+            self.stop_worker(worker)
 
     def remove_all_workers(self):
         log.debug('Removing all workers from worker pool')
-        for worker_id, worker in self.workers.items():
-            self.remove_worker(worker_id)
+        for worker in self.workers.values():
+            self.remove_worker(worker)

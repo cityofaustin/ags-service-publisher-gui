@@ -24,6 +24,9 @@ def reload_configs(*args, **kwargs):
         if include_userconfig:
             get_config_cached('userconfig', **kwargs)
         get_configs_cached(*args, **kwargs)
-        log.info(f'Configuration files successfully {mode}ed.')
+        message = f'Configuration files successfully {mode}ed.'
+        log.info(message)
+        return message
     except:
         log.exception(f'An error occurred {mode}ing configuration files')
+        raise

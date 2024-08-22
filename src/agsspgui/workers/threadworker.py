@@ -16,17 +16,18 @@ class ThreadWorker(QtCore.QObject):
     Signals and parameters:
 
         - resultEmitted: Emitted when the thread ends.
-            - Worker ID (int)
+            - Worker (QObject)
             - Exit code (int)
             - Return value or exception instance (object)
     """
 
-    resultEmitted = QtCore.pyqtSignal(int, int, object)
+    resultEmitted = QtCore.pyqtSignal(QtCore.QObject, int, object)
 
 
     def __init__(self, worker_pool, target=None, args=(), kwargs={}):
         super(ThreadWorker, self).__init__()
         self.id = worker_pool.get_next_worker_id()
+        self.name = f'{type(self).__name__}-{self.id}'
         self.exitcode = None
         self.running = False
         self.elapsed_timer = None
@@ -40,20 +41,20 @@ class ThreadWorker(QtCore.QObject):
         self.thread.started.connect(self.start)
         self.thread.finished.connect(self.stop)
 
-        log.debug('Worker {} initialized on thread {}'.format(self.id, str(self.thread)))
+        log.debug(f'{self.name} initialized on thread {str(self.thread)}')
 
     @QtCore.pyqtSlot()
     def start(self):
         if self.running:
-            log.warn('Worker {} already started on thread {}'.format(self.id, str(self.thread)))
+            log.warn(f'{self.name} already started on thread {str(self.thread)}')
             return
-        log.debug('Worker {} started on thread {}'.format(self.id, str(self.thread)))
+        log.debug(f'{self.name} started on thread {str(self.thread)}')
         self.running = True
 
         self.elapsed_timer = QtCore.QElapsedTimer()
         self.elapsed_timer.start()
 
-        log.debug('Thread {} started'.format(self.thread))
+        log.debug(f'Thread {self.thread} started')
 
         QtCore.QTimer.singleShot(0, lambda: self.wrap_target_function(self.target, *self.args, **self.kwargs))
 
@@ -61,14 +62,14 @@ class ThreadWorker(QtCore.QObject):
     @QtCore.pyqtSlot()
     def stop(self):
         if not self.running:
-            log.warn('Worker {} already stopped on thread {}'.format(self.id, str(self.thread)))
+            log.warn(f'{self.name} already stopped on thread {str(self.thread)}')
             return
         self.running = False
 
         if self.thread.isRunning():
-            log.debug('Terminating thread {} '.format(self.thread))
+            log.debug(f'Terminating thread {self.thread}')
             self.thread.exit(self.exitcode)
-        log.debug('Worker {} stopped on thread {} (elapsed time {})'.format(self.id, str(self.thread), timedelta(milliseconds=self.elapsed_timer.elapsed())))
+        log.debug(f'{self.name} stopped on thread {str(self.thread)} (elapsed time {timedelta(milliseconds=self.elapsed_timer.elapsed())})')
 
 
     def wrap_target_function(self, target, *args, **kwargs):
@@ -80,6 +81,5 @@ class ThreadWorker(QtCore.QObject):
         except:
             self.exitcode = 1
             result = Exception(''.join(traceback.format_exception(*sys.exc_info())))
-            raise
         finally:
-            self.resultEmitted.emit(self.id, self.exitcode, result)
+            self.resultEmitted.emit(self, self.exitcode, result)

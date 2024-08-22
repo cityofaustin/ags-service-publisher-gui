@@ -20,21 +20,22 @@ class SubprocessWorker(QtCore.QObject):
     Signals and parameters:
 
         - messageEmitted: Emitted whenever the target function's root logger emits a message
-            - Worker ID (int)
+            - Worker (QObject)
             - Log level (int)
             - Log message (str)
         - resultEmitted: Emitted when the process ends.
-            - Worker ID (int)
+            - Worker (QObject)
             - Exit code (int)
             - Return value or exception instance (object)
     """
 
-    messageEmitted = QtCore.pyqtSignal(int, int, str)
-    resultEmitted = QtCore.pyqtSignal(int, int, object)
+    messageEmitted = QtCore.pyqtSignal(QtCore.QObject, int, str)
+    resultEmitted = QtCore.pyqtSignal(QtCore.QObject, int, object)
 
     def __init__(self, worker_pool, target=None, args=(), kwargs={}, timer_check_interval=1000, log_handler=None):
         super(SubprocessWorker, self).__init__()
         self.id = worker_pool.get_next_worker_id()
+        self.name = f'{type(self).__name__}-{self.id}'
         self.running = False
         self.timer = None
         self.timer_check_interval = timer_check_interval
@@ -55,30 +56,28 @@ class SubprocessWorker(QtCore.QObject):
         self.thread.started.connect(self.start)
         self.thread.finished.connect(self.stop)
 
-        log.debug('Worker {} initialized on thread {}'.format(self.id, str(self.thread)))
+        log.debug(f'{self.name} initialized on thread {self.thread}')
 
     def check_process_status(self):
         if not self.running:
             message = 'Cannot check process status while worker is not running!'
             log.error(message)
             raise RuntimeError(message)
-        log.debug('Checking status of subprocess {} (pid {})'.format(self.process.name, self.process.pid))
+        log.debug(f'Checking status of subprocess {self.process.name} (pid {self.process.pid})')
         if not self.process.is_alive():
-            message = 'Subprocess {} ended (pid {}, exit code {}, elapsed time {})'.format(
-                self.process.name, self.process.pid, self.process.exitcode, timedelta(milliseconds=self.elapsed_timer.elapsed())
-            )
+            message = f'Subprocess {self.process.name} ended (pid {self.process.pid}, exit code {self.process.exitcode}, elapsed time {timedelta(milliseconds=self.elapsed_timer.elapsed())}'
             log.debug(message)
-            self.resultEmitted.emit(self.id, self.process.exitcode, self.result_queue.get())
+            self.resultEmitted.emit(self, self.process.exitcode, self.result_queue.get())
         else:
-            message = 'Subprocess {} (pid {}) is still active (elapsed time {})'.format(self.process.name, self.process.pid, timedelta(milliseconds=self.elapsed_timer.elapsed()))
+            message = f'Subprocess {self.process.name} (pid {self.process.pid}) is still active (elapsed time {timedelta(milliseconds=self.elapsed_timer.elapsed())})'
             log.debug(message)
 
     @QtCore.pyqtSlot()
     def start(self):
         if self.running:
-            log.warn('Worker {} already started on thread {}'.format(self.id, str(self.thread)))
+            log.warn(f'{self.name} already started on thread {str(self.thread)}')
             return
-        log.debug('Worker {} started on thread {}'.format(self.id, str(self.thread)))
+        log.debug(f'{self.name} started on thread {str(self.thread)}')
         self.running = True
 
         self.timer = QtCore.QTimer()
@@ -96,27 +95,27 @@ class SubprocessWorker(QtCore.QObject):
         self.process.start()
         self.timer.start(self.timer_check_interval)
         self.elapsed_timer.start()
-        log.debug('Subprocess {} (pid {}) started'.format(self.process.name, self.process.pid))
+        log.debug(f'Subprocess {self.process.name} (pid {self.process.pid}) started')
 
     @QtCore.pyqtSlot()
     def stop(self):
         if not self.running:
-            log.warn('Worker {} already stopped on thread {}'.format(self.id, str(self.thread)))
+            log.warn(f'{self.name} already stopped on thread {str(self.thread)}')
             return
         self.running = False
         self.timer.stop()
 
         if self.process.is_alive():
-            log.debug('Terminating subprocess {} (pid {})'.format(self.process.name, self.process.pid))
+            log.debug(f'Terminating subprocess {self.process.name} (pid {self.process.pid})')
             self.process.terminate()
             self.process.join()
-        log.debug('Worker {} stopped on thread {} (elapsed time {})'.format(self.id, str(self.thread), timedelta(milliseconds=self.elapsed_timer.elapsed())))
+        log.debug(f'{self.name} stopped on thread {str(self.thread)} (elapsed time {timedelta(milliseconds=self.elapsed_timer.elapsed())})')
 
         self.log_queue_listener.stop()
 
     @QtCore.pyqtSlot(int, str)
     def handle_message(self, level, message):
-        self.messageEmitted.emit(self.id, level, message)
+        self.messageEmitted.emit(self, level, message)
 
 
 def wrap_target_function(target, log_queue, result_queue, *args, **kwargs):
