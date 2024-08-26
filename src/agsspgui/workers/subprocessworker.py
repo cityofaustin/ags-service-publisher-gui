@@ -127,4 +127,4 @@ def wrap_target_function(target, log_queue, result_queue, *args, **kwargs):
     except:
         result = Exception(''.join(traceback.format_exception(*sys.exc_info())))
         result_queue.put(result)
-        raise
+        sys.exit(1)
