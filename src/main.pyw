@@ -1,6 +1,13 @@
 import logging
 import multiprocessing
+import os
 import sys
+
+# Workaround for multiprocessing.Process writing to non-existent standard streams in GUI application
+if sys.stdout is None:
+    sys.stdout = open(os.devnull, 'w')
+if sys.stderr is None:
+    sys.stderr = open(os.devnull, 'w')
 
 from PyQt6 import QtCore, QtWidgets
 from ags_service_publisher.logging_io import setup_logger, setup_console_log_handler
